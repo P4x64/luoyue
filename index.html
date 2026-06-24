@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</title>
+    <style>
+        /* 完全还原第一版的清爽亮色背景 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f4f5f7; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        /* 纯白卡片容器与柔和阴影 */
+        .container {
+            background-color: #fff;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            padding: 40px 30px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        /* 输入/输出框样式还原 */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+            background-color: #fafafa;
+            color: #333;
+        }
+        textarea:focus {
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+        textarea::placeholder {
+            color: #999;
+        }
+        /* 按钮区域 */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            color: #fff;
+            transition: transform 0.1s, opacity 0.3s;
+            font-weight: bold;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        button:hover {
+            opacity: 0.85;
+        }
+        /* 还原第一版的按钮配色 */
+        .btn-encode { background-color: #e67e22; } 
+        .btn-decode { background-color: #27ae60; } 
+        .btn-copy { background-color: #2980b9; } 
+        .btn-clear { background-color: #95a5a6; } 
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #bdc3c7;
+            text-align: center;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</h1>
+    <div class="subtitle">【高度机密 · 内部专享 · 阅后即焚】</div>
+
+    <textarea id="inputText" placeholder=">_ 请在此输入最高机密原文，或粘贴带有“罗曰：”的加密指令..."></textarea>
+
+    <div class="buttons">
+        <button class="btn-encode" onclick="encodeText()">加密混淆 (生成罗曰)</button>
+        <button class="btn-decode" onclick="decodeText()">解密授权 (还原明文)</button>
+    </div>
+    
+    <div class="buttons" style="margin-top: 0;">
+        <button class="btn-copy" onclick="copyText()">复制输出结果</button>
+        <button class="btn-clear" onclick="clearText()">清空操作台</button>
+    </div>
+
+    <textarea id="outputText" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
+    
+    <div class="footer">
+        * 警告：本终端采用“罗氏”专属特制核心字库矩阵进行高强度混淆加密。<br>
+        * 纯本地脱机运算，防拦截、防嗅探，请妥善保管解密环境。
+    </div>
+</div>
+
+<script>
+    // 1. 标准 Base64 字符表
+    const b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    
+    // 2. 核心自定义替换字库
+    const dict = "阿弥陀佛观世音菩萨大势至地藏王文殊普贤如来金刚般若波罗蜜多心经法华楞严清净慈悲喜舍因果轮回涅槃善恶业报无明烦恼提缘起性空界众生宝德";
+
+    const PREFIX = "罗曰：";
+
+    // 加密功能
+    function encodeText() {
+        const input = document.getElementById('inputText').value;
+        if (!input) {
+            alert('系统警告：请输入需要加密的内容！');
+            return;
+        }
+        try {
+            let b64 = btoa(unescape(encodeURIComponent(input)));
+            let result = PREFIX;
+            for (let i = 0; i < b64.length; i++) {
+                let index = b64chars.indexOf(b64[i]);
+                if (index !== -1) {
+                    result += dict[index];
+                }
+            }
+            document.getElementById('outputText').value = result;
+        } catch (e) {
+            alert("加密异常：包含无法处理的特殊指令符号。");
+        }
+    }
+
+    // 解密功能
+    function decodeText() {
+        let input = document.getElementById('inputText').value.trim();
+        if (!input) {
+            alert('系统警告：请输入需要解密的密文！');
+            return;
+        }
+        try {
+            if (input.startsWith(PREFIX)) {
+                input = input.substring(PREFIX.length);
+            } else {
+                alert("权限拒绝：密文协议头不匹配，必须以“" + PREFIX + "”开头！");
+                return;
+            }
+            let b64 = "";
+            for (let i = 0; i < input.length; i++) {
+                let index = dict.indexOf(input[i]);
+                if (index !== -1) {
+                    b64 += b64chars[index];
+                }
+            }
+            if (!b64) {
+                alert("解析失败：未检测到有效的加密矩阵。");
+                return;
+            }
+            let str = decodeURIComponent(escape(atob(b64)));
+            document.getElementById('outputText').value = str;
+        } catch (e) {
+            alert("解密失败：密文数据已损坏或遭到未授权篡改。");
+        }
+    }
+
+    // 复制功能
+    function copyText() {
+        const output = document.getElementById('outputText');
+        if (!output.value) {
+            alert("操作台无数据可复制。");
+            return;
+        }
+        output.select();
+        document.execCommand("copy");
+        alert("指令已安全复制到剪贴板！");
+    }
+
+    // 清空功能
+    function clearText() {
+        document.getElementById('inputText').value = "";
+        document.getElementById('outputText').value = "";
+    }
+</script>
+
+</body>
+</html>
