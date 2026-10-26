@@ -59,82 +59,82 @@
             background-color: #fafafa;
             color: #333;
         }
-        textarea.main-textarea:focus {
-            border-color: #3498db;
-            background-color: #fff;
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        .btn-fill-roll:hover {
+            background: #e2e8f0;
         }
-        textarea.main-textarea::placeholder {
-            color: #999;
+
+        /* 双人互动气泡内名字高亮与自定义词库面板样式 */
+        .bubble-name-tag {
+            background: rgba(0, 0, 0, 0.22);
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-weight: 800;
+            color: #fff200;
+            margin: 0 2px;
         }
-        /* 按钮区域 */
-        .buttons {
+        .custom-dict-panel {
+            margin-top: 12px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 14px;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        .custom-dict-panel.show {
+            display: block;
+        }
+        .dict-input-row {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 8px;
             flex-wrap: wrap;
+            margin-top: 8px;
         }
-        .main-btn {
-            padding: 10px 20px;
-            border: none;
+        .dict-input {
+            flex: 1;
+            min-width: 220px;
+            padding: 7px 12px;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-            color: #fff;
-            transition: transform 0.1s, opacity 0.3s, box-shadow 0.2s;
-            font-weight: bold;
+            font-size: 13px;
+            outline: none;
         }
-        .main-btn:active {
-            transform: scale(0.96);
+        .dict-input:focus {
+            border-color: #8e44ad;
+            box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.15);
         }
-        .main-btn:hover {
-            opacity: 0.88;
-        }
-        /* 还原第一版的按钮配色 + 新增藏头诗入口配色 */
-        .btn-encode { background-color: #e67e22; } 
-        .btn-decode { background-color: #27ae60; } 
-        .btn-copy { background-color: #2980b9; } 
-        .btn-clear { background-color: #95a5a6; } 
-        .btn-poem-entry { 
-            background-color: #8e44ad; 
-            box-shadow: 0 4px 12px rgba(142, 68, 173, 0.25);
-        }
-        
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #bdc3c7;
-            text-align: center;
-            line-height: 1.6;
-        }
-        /* 底部访问与点击量统计栏 */
-        .stats-bar {
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px dashed #ecf0f1;
+        .dict-tag-list {
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 18px;
             flex-wrap: wrap;
-            font-size: 12px;
-            color: #95a5a6;
+            gap: 6px;
+            padding: 8px;
+            background: #f8fafc;
+            border: 1px inset #e2e8f0;
+            border-radius: 6px;
         }
-        .stats-item {
+        .dict-tag-item {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            background: #f8f9fa;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid #eee;
+            gap: 6px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 12px;
+            color: #334155;
         }
-        .stats-num {
-            color: #e67e22;
+        .dict-tag-del {
+            color: #ef4444;
+            cursor: pointer;
             font-weight: bold;
-            font-family: monospace;
-            font-size: 13px;
+            padding: 0 2px;
+            line-height: 1;
+        }
+        .dict-tag-del:hover {
+            color: #b91c1c;
         }
 
         /* 视图切换控制 */
@@ -332,34 +332,306 @@
             color: #718096;
             line-height: 1.6;
         }
-    </style>
-</head>
-<body>
 
-<!-- 全局消息提示条 -->
-<div id="sysToast" class="sys-toast">系统提示</div>
+        /* ================= 新增：董事会成员随机冒出与趣味席位样式 ================= */
+        .bubble-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9000;
+        }
 
-<div class="container-card">
-    
-    <!-- ==================== 主网页视图：“罗曰”专用工具 ==================== -->
-    <div id="mainView" class="view-section active">
-        <h1>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</h1>
-        <div class="subtitle">【高度机密 · 内部专享 · 阅后即焚】</div>
+        .name-bubble {
+            position: absolute;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            line-height: 1.3;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.09), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+            will-change: transform, opacity;
+            animation: bubblePopFloat 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
 
-        <textarea id="inputText" class="main-textarea" placeholder=">_ 请在此输入最高机密原文，或粘贴带有“罗曰：”的加密指令..."></textarea>
+        .name-bubble.click-burst {
+            animation: bubbleClickBurst 2.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            font-size: 14px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+        }
 
-        <div class="buttons">
-            <button class="main-btn btn-encode" onclick="encodeText()">加密混淆 (生成罗曰)</button>
-            <button class="main-btn btn-decode" onclick="decodeText()">解密授权 (还原明文)</button>
+        .bubble-icon {
+            font-size: 14px;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.08));
+        }
+
+        .bubble-member {
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .bubble-status {
+            font-size: 11.5px;
+            opacity: 0.82;
+            padding-left: 4px;
+            border-left: 1px solid currentColor;
+        }
+
+        @keyframes bubblePopFloat {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 14px) scale(0.45);
+            }
+            14% {
+                opacity: 0.98;
+                transform: translate(-50%, -2px) scale(1.06);
+            }
+            24% {
+                opacity: 0.96;
+                transform: translate(-50%, -8px) scale(1);
+            }
+            78% {
+                opacity: 0.88;
+                transform: translate(-50%, -46px) scale(0.99);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -74px) scale(0.92);
+            }
+        }
+
+        @keyframes bubbleClickBurst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -20%) scale(0.3);
+            }
+            18% {
+                opacity: 1;
+                transform: translate(-50%, -65%) scale(1.14);
+            }
+            32% {
+                opacity: 0.98;
+                transform: translate(-50%, -85%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -175%) scale(0.94);
+            }
+        }
+
+        /* 董事会实时席位互动控制台 */
+        .board-console {
+            background: linear-gradient(135deg, #f8fafc 0%, #fffbeb 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin: -14px 0 22px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .board-console-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+        }
+
+        .duty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 5px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .duty-badge:hover {
+            border-color: #f59e0b;
+            background: #fffdf5;
+            transform: translateY(-1px);
+        }
+
+        .duty-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            animation: dutyPulse 1.8s infinite;
+        }
+
+        @keyframes dutyPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+
+        .duty-name {
+            font-weight: 700;
+            color: #d97706;
+        }
+
+        .board-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .mini-fun-btn {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 5px 11px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            user-select: none;
+        }
+
+        .mini-fun-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-summon-all {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
+        }
+        .btn-summon-all:hover {
+            opacity: 0.92;
+        }
+
+        .btn-roll-call {
+            background: #eff6ff;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+        .btn-roll-call:hover {
+            background: #dbeafe;
+        }
+
+        .btn-toggle-bubble {
+            background: #ecfdf5;
+            color: #059669;
+            border-color: #a7f3d0;
+        }
+        .btn-toggle-bubble.paused {
+            background: #f1f5f9;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+
+        /* 随机点名结果聚光条 */
+        .roll-spotlight {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(90deg, #fffbeb, #fef3c7, #fffbeb);
+            border: 1px dashed #f59e0b;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #92400e;
+            text-align: center;
+        }
+
+        .roll-spotlight.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .roll-winner {
+            font-weight: 800;
+            font-size: 15px;
+            color: #b45309;
+            padding: 0 4px;
+        }
+
+        @media (max-width: 600px) {
+            .container-card {
+                padding: 26px 18px;
+            }
+            .board-console-row {
+                justify-content: center;
+            }
+        <!-- ==================== 新增：董事会群友随机冒出趣味互动台 ==================== -->
+        <div class="fun-console">
+            <div class="fun-console-header">
+                <div class="fun-console-title">
+                    <span class="online-dot"></span>
+                    <span>三星⭐⭐⭐董事会群友随机整活系统（48 位董事单人/双人配对出没中）</span>
+                </div>
+                <span style="font-size: 11.5px; color: #7f8c8d;">💡 提示：点击空白处炸出双人/单人八卦，支持自由添加词库</span>
+            </div>
+
+            <div class="fun-controls-row">
+                <div class="fun-btn-group">
+                    <button type="button" class="fun-btn fun-btn-roll" onclick="rollLuckyMember()">🎲 抽天选董事八卦</button>
+                    <button type="button" class="fun-btn fun-btn-party" onclick="summonMemberStorm()">🎆 满屏群友发车</button>
+                    <button type="button" class="fun-btn fun-btn-toggle" onclick="toggleCustomDictPanel()">⚙️ 自定义整活词库</button>
+                </div>
+                <div class="fun-btn-group">
+                    <button type="button" id="btnModeToggle" class="fun-btn fun-btn-toggle active-state" onclick="toggleBubbleMode()">🔥 模式：损友整活</button>
+                    <button type="button" id="btnAutoToggle" class="fun-btn fun-btn-toggle active-state" onclick="toggleAutoSpawn()">🫧 自动冒出：开启</button>
+                </div>
+            </div>
+
+            <!-- 随机抽签点名结果展示栏 -->
+            <div id="rollResultCard" class="roll-result-card">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-size: 13px; color: #718096;">🎯 董事会机密爆料：</span>
+                    <span id="rolledMemberName" class="roll-name-highlight">--</span>
+                    <span id="rolledMemberTitle" class="roll-title-tag">--</span>
+                </div>
+                <button type="button" class="btn-fill-roll" onclick="sendRollToEncrypt()">🔐 填入加密框</button>
+            </div>
+
+            <!-- 可视化自定义整活词库面板（自动保存到本地 localStorage） -->
+            <div id="customDictPanel" class="custom-dict-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                    <span style="font-size: 12.5px; font-weight: 700; color: #2c3e50;">
+                        🛠️ 自定义整活/八卦句式库（当前共 <span id="dictCountBadge" style="color:#8e44ad;">0</span> 条，自动保存在本地浏览器）
+                    </span>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button type="button" class="btn-fill-roll" onclick="insertPlaceholder('{A}')">+ 插入 {A} (群友1)</button>
+                        <button type="button" class="btn-fill-roll" onclick="insertPlaceholder('{B}')">+ 插入 {B} (群友2)</button>
+                    </div>
+                </div>
+                <div class="dict-input-row">
+                    <input type="text" id="customTplInput" class="dict-input" placeholder="输入自定义整活句式，例如：{A} 偷偷给 {B} 穿上了神秘黑丝...">
+                    <button type="button" class="fun-btn fun-btn-party" onclick="addCustomTemplate()">➕ 添加并立即触发</button>
+                </div>
+                <div id="dictTagList" class="dict-tag-list"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 8px;">
+                    <span style="font-size: 11.5px; color: #94a3b8;">* 提示：您也可以直接在 HTML 源码顶部找到 DEFAULT_PRANK_TEMPLATES 数组自由修改</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-fill-roll" onclick="exportTemplatesAsCode()">📋 导出词库为JS代码</button>
+                        <button type="button" class="btn-fill-roll" style="color:#c0392b;" onclick="resetDefaultTemplates()">🔄 恢复默认词库</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="buttons" style="margin-top: 0;">
-            <button class="main-btn btn-copy" onclick="copyText()">复制输出结果</button>
-            <button class="main-btn btn-clear" onclick="clearText()">清空操作台</button>
-            <button class="main-btn btn-poem-entry" onclick="openPoemTool()">📜 字符藏头诗工具</button>
-        </div>
-
-        <textarea id="outputText" class="main-textarea" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
         
         <div class="footer">
             * 警告：本终端采用“罗氏”专属特制核心字库矩阵进行高强度混淆加密。<br>
@@ -372,7 +644,10 @@
                     🔐 本次会话加解密：<span id="sessionClickCount" class="stats-num">0</span> 次
                 </span>
                 <span class="stats-item" id="busuanzi_container_site_pv">
-                    👁️ 董事会总访问量：<span id="busuanzi_value_site_pv" class="stats-num">--</span>
+                    👁️ 董事会总访问(PV)：<span id="busuanzi_value_site_pv" class="stats-num">--</span>
+                </span>
+                <span class="stats-item" id="busuanzi_container_site_uv">
+                    👤 董事访客数(UV)：<span id="busuanzi_value_site_uv" class="stats-num">--</span>
                 </span>
             </div>
         </div>
@@ -1051,8 +1326,468 @@
     document.getElementById('decodeInput').addEventListener('input', doDecode);
     document.getElementById('btnCopy').onclick = copyPoem;
 
-    // 初始化点击量统计
+    // ============================================================================
+    // 【🔥 核心自定义区：董事会 48 位群友名单 & 损友/老司机整活词库配置 🔥】
+    // 本地修改指南：您可以直接在此处增删改句式，使用 {A} 代表随机群友1，{B} 代表随机群友2
+    // ============================================================================
+    const BOARD_MEMBERS = [
+        "邓座", "邓哥", "邓局", "源", "邓思源", "锐", "李子渊", "地瓜",
+        "李梓豪", "李梦昭", "李森林", "森林哥", "冯海裕", "佛山仔", "叶泰环", "液态环",
+        "嘎嘎", "陈辉", "处男", "王至立", "大白", "霖霖", "李文杰", "奶子杰",
+        "Masir", "多特麻", "麻sir", "刘少侠", "Ayong", "厦门夫", "燕子", "王均琪",
+        "4v", "蒋思危", "风中梦", "不喜", "yc", "林北", "7AM", "队长",
+        "周教练", "俊宏", "威少", "淦", "科勒姆尼茨白", "Pirate", "三个石头三个金", "775600615"
+    ];
+
+    // 默认内置损友/老司机单人与双人互动整活模板（支持 {A} 与 {B} 双人随机配对）
+    const DEFAULT_PRANK_TEMPLATES = [
+        // --- 双人随机配对整活（{A} 与 {B} 互动） ---
+        "{A} 偷偷给 {B} 寄了一双蕾丝黑丝",
+        "{A} 拉着 {B} 去了洗脚城包夜加钟",
+        "{A} 把珍藏的绝版黑丝照私发给了 {B}",
+        "{A} 半夜钻进了 {B} 的被窝探讨人生",
+        "{A} 逼着 {B} 换上嗨丝给全群跳擦边舞",
+        "{A} 和 {B} 在秋名山飙车并焊死了车门",
+        "{A} 在洗浴中心偶遇了刚做完大保健的 {B}",
+        "{A} 趁 {B} 喝醉偷偷给他换上了女仆黑丝装",
+        "{A} 抢走了 {B} 最心爱的洗脚城 88 号技师",
+        "{A} 向 {B} 借了 2T 加密移动硬盘至今未还",
+        "{A} 举报 {B} 独吞群内黑丝福利姬资源",
+        "{A} 当众撕开了 {B} 珍藏的巴黎世家黑丝",
+        "{A} 含情脉脉地帮 {B} 穿上了吊带渔网袜",
+        "{A} 带着 {B} 去会所点了一排男模女模",
+        // --- 单人老司机/损友调侃（仅 {A}） ---
+        "{A} 穿上了神秘黑丝在董事会走秀",
+        "{A} 刚刚在洗脚城充了 8888 元至尊 VIP",
+        "{A} 深夜偷偷打开了 2T 加密学习资料",
+        "{A} 成为了擦边女主播的榜一大哥",
+        "{A} 穿黑丝女装自拍不小心发到了大群",
+        "{A} 正在会所嫩模怀里探讨人生哲学",
+        "{A} 看着黑丝写真流下了不争气的口水",
+        "{A} 偷偷下单了十双渔网袜准备董事会团建穿",
+        "{A} 昨晚奖励自己太多次今天扶着墙进群",
+        "{A} 的深夜浏览器历史记录曝光震惊全群",
+        "{A} 在群里求老司机发神秘番号车牌",
+        "{A} 表面一本正经，背地里全是黑丝收藏夹"
+    ];
+
+    // 常规商务搞笑状态（可在切换模式时使用）
+    const NORMAL_STATUS_TEMPLATES = [
+        "{A} 正在暗中观察群聊",
+        "{A} 接入了三星机密终端",
+        "{A} 投出了董事会赞成票",
+        "{A} 与 {B} 正在密谋百亿项目",
+        "{A} 撤回了一条最高机密指令",
+        "{A} 点了根华子陷入沉思",
+        "{A} 从全球总部向 {B} 发来贺电",
+        "{A} 表示这波稳如老狗"
+    ];
+
+    const MEMBER_EMOJIS = [
+        "🔥", "🔞", "🕶️", "💃", "👠", "🦵", "🍾", "🥂", "👑", "🚀",
+        "⚡", "💎", "🐉", "🌶️", "🎭", "🛸", "🦁", "🐯", "🧨", "🎉"
+    ];
+
+    const BUBBLE_GRADIENTS = [
+        "linear-gradient(135deg, #FF416C, #FF4B2B)",
+        "linear-gradient(135deg, #8E2DE2, #4A00E0)",
+        "linear-gradient(135deg, #F0932B, #EB4D4B)",
+        "linear-gradient(135deg, #11998e, #38ef7d)",
+        "linear-gradient(135deg, #FC466B, #3F5EFB)",
+        "linear-gradient(135deg, #0097E6, #00A8FF)",
+        "linear-gradient(135deg, #e65c00, #F9D423)",
+        "linear-gradient(135deg, #2C3E50, #4CA1AF)",
+        "linear-gradient(135deg, #D980FA, #5758BB)",
+        "linear-gradient(135deg, #c31432, #240b36)"
+    ];
+
+    const CUSTOM_DICT_STORAGE_KEY = "luoyue_custom_prank_templates_v2";
+    let prankTemplates = [];
+    let autoSpawnEnabled = true;
+    // bubbleMode: 0 = 损友整活(默认), 1 = 常规动态, 2 = 纯净名字
+    let bubbleMode = 0;
+    let autoSpawnTimer = null;
+    let lastRolledText = "";
+
+    function pickRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    // 随机抽取两个不重复的群友名字
+    function pickTwoDistinctMembers(fixedFirst) {
+        const first = fixedFirst || pickRandom(BOARD_MEMBERS);
+        let second = pickRandom(BOARD_MEMBERS);
+        let guard = 0;
+        while (second === first && guard < 20) {
+            second = pickRandom(BOARD_MEMBERS);
+            guard++;
+        }
+        return [first, second];
+    }
+
+    // 加载本地保存的整活词库
+    function loadPrankTemplates() {
+        try {
+            const raw = localStorage.getItem(CUSTOM_DICT_STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    prankTemplates = parsed;
+                    renderDictTagList();
+                    return;
+                }
+            }
+        } catch (e) {}
+        prankTemplates = [...DEFAULT_PRANK_TEMPLATES];
+        renderDictTagList();
+    }
+
+    function savePrankTemplates() {
+        localStorage.setItem(CUSTOM_DICT_STORAGE_KEY, JSON.stringify(prankTemplates));
+        renderDictTagList();
+    }
+
+    // 将模板渲染为带高亮的 HTML 与纯文本
+    function buildPrankContent(templateStr, fixedA) {
+        const [memberA, memberB] = pickTwoDistinctMembers(fixedA);
+        let tpl = templateStr;
+        if (!tpl.includes('{A}') && !tpl.includes('{B}')) {
+            tpl = "{A} " + tpl;
+        }
+        const plainText = tpl.replace(/\{A\}/g, memberA).replace(/\{B\}/g, memberB);
+        const htmlText = tpl
+            .replace(/\{A\}/g, `<span class="bubble-name-tag">${memberA}</span>`)
+            .replace(/\{B\}/g, `<span class="bubble-name-tag">${memberB}</span>`);
+        return {
+            memberA,
+            memberB,
+            hasB: tpl.includes('{B}'),
+            plainText,
+            htmlText
+        };
+    }
+
+    // 生成一个随机冒出的名字/整活气泡
+    function spawnMemberBubble(options = {}) {
+        const layer = document.getElementById('floatingNamesLayer');
+        if (!layer) return;
+
+        // 限制同屏最大气泡数量，保证页面流畅
+        if (layer.childElementCount > 45 && !options.isClick) {
+            layer.removeChild(layer.firstElementChild);
+        }
+
+        const emoji = pickRandom(MEMBER_EMOJIS);
+        const gradient = pickRandom(BUBBLE_GRADIENTS);
+
+        const bubble = document.createElement('div');
+        bubble.className = 'name-pop-bubble' + (options.isClick ? ' click-burst' : '');
+        bubble.style.background = gradient;
+
+        if (options.customHtml) {
+            bubble.innerHTML = `<span>${emoji}</span><span>${options.customHtml}</span>`;
+        } else if (bubbleMode === 0) {
+            // 损友/老司机单双人整活模式
+            const activePool = prankTemplates.length > 0 ? prankTemplates : DEFAULT_PRANK_TEMPLATES;
+            const tpl = options.template || pickRandom(activePool);
+            const built = buildPrankContent(tpl, options.name);
+            bubble.innerHTML = `<span>${emoji}</span><span>${built.htmlText}</span>`;
+        } else if (bubbleMode === 1) {
+            // 常规董事会动态模式
+            const tpl = pickRandom(NORMAL_STATUS_TEMPLATES);
+            const built = buildPrankContent(tpl, options.name);
+            bubble.innerHTML = `<span>${emoji}</span><span>${built.htmlText}</span>`;
+        } else {
+            // 纯净名字模式
+            const name = options.name || pickRandom(BOARD_MEMBERS);
+            bubble.innerHTML = `<span>${emoji} ${name}</span>`;
+        }
+
+        // 计算冒出位置
+        let x, y;
+        if (typeof options.x === 'number' && typeof options.y === 'number') {
+            x = options.x;
+            y = options.y;
+        } else {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const side = Math.random();
+            if (side < 0.38 && vw > 960) {
+                x = 90 + Math.random() * ((vw - 800) / 2 - 40);
+                y = 60 + Math.random() * (vh - 120);
+            } else if (side < 0.76 && vw > 960) {
+                const rightStart = (vw + 800) / 2 + 20;
+                x = rightStart + Math.random() * Math.max(60, vw - rightStart - 90);
+                y = 60 + Math.random() * (vh - 120);
+            } else {
+                x = Math.max(100, Math.min(vw - 100, 80 + Math.random() * (vw - 160)));
+                y = Math.max(50, Math.min(vh - 50, 50 + Math.random() * (vh - 100)));
+            }
+        }
+
+        bubble.style.left = x + 'px';
+        bubble.style.top = y + 'px';
+        layer.appendChild(bubble);
+
+        const duration = options.isClick ? 2400 : 3600;
+        setTimeout(() => {
+            if (bubble && bubble.parentNode) {
+                bubble.parentNode.removeChild(bubble);
+            }
+        }, duration);
+    }
+
+    // 点击空白处爆出粒子特效
+    function spawnClickParticles(x, y) {
+        const layer = document.getElementById('floatingNamesLayer');
+        if (!layer) return;
+        const particles = ["✨", "🔥", "👠", "💃", "🍾", "⚡"];
+        for (let i = 0; i < 6; i++) {
+            const p = document.createElement('span');
+            p.className = 'burst-particle';
+            p.innerText = pickRandom(particles);
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            const angle = (Math.PI * 2 * i) / 6 + (Math.random() * 0.5 - 0.25);
+            const dist = 36 + Math.random() * 42;
+            p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+            p.style.setProperty('--rot', (Math.random() * 120 - 60) + 'deg');
+            layer.appendChild(p);
+            setTimeout(() => {
+                if (p && p.parentNode) p.parentNode.removeChild(p);
+            }, 1000);
+        }
+    }
+
+    // 启动定时随机冒出循环
+    function scheduleNextAutoSpawn() {
+        if (autoSpawnTimer) clearTimeout(autoSpawnTimer);
+        if (!autoSpawnEnabled) return;
+        const delay = 950 + Math.random() * 850;
+        autoSpawnTimer = setTimeout(() => {
+            if (autoSpawnEnabled && !document.hidden) {
+                spawnMemberBubble();
+            }
+            scheduleNextAutoSpawn();
+        }, delay);
+    }
+
+    // 切换三种气泡模式：损友整活 -> 常规动态 -> 纯净名字
+    function toggleBubbleMode() {
+        bubbleMode = (bubbleMode + 1) % 3;
+        const btn = document.getElementById('btnModeToggle');
+        if (bubbleMode === 0) {
+            btn.innerText = '🔥 模式：损友整活';
+            btn.classList.add('active-state');
+            showMessage('已切换为：损友/老司机单双人整活模式！', '#8e44ad');
+        } else if (bubbleMode === 1) {
+            btn.innerText = '💬 模式：常规动态';
+            btn.classList.add('active-state');
+            showMessage('已切换为：常规董事会动态模式', '#2980b9');
+        } else {
+            btn.innerText = '🏷️ 模式：纯净名字';
+            btn.classList.remove('active-state');
+            showMessage('已切换为：纯净群友名字冒出模式', '#7f8c8d');
+        }
+        spawnMemberBubble();
+    }
+
+    // 切换自动冒出开关
+    function toggleAutoSpawn() {
+        autoSpawnEnabled = !autoSpawnEnabled;
+        const btn = document.getElementById('btnAutoToggle');
+        if (autoSpawnEnabled) {
+            btn.innerText = '🫧 自动冒出：开启';
+            btn.classList.add('active-state');
+            scheduleNextAutoSpawn();
+            showMessage('已开启群友整活气泡自动冒出！', '#27ae60');
+        } else {
+            btn.innerText = '⏸️ 自动冒出：暂停';
+            btn.classList.remove('active-state');
+            if (autoSpawnTimer) clearTimeout(autoSpawnTimer);
+            showMessage('已暂停自动冒出（点击空白处依然可以手动炸出八卦）', '#7f8c8d');
+        }
+    }
+
+    // 🎆 满屏狂暴召唤群友发车
+    function summonMemberStorm() {
+        recordActionClick();
+        const shuffled = [...BOARD_MEMBERS].sort(() => Math.random() - 0.5);
+        const count = 26;
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const rx = 90 + Math.random() * Math.max(100, vw - 180);
+                const ry = 60 + Math.random() * Math.max(100, vh - 120);
+                spawnMemberBubble({
+                    name: shuffled[i % shuffled.length],
+                    x: rx,
+                    y: ry
+                });
+            }, i * 60);
+        }
+        showMessage('🎆 董事会全员发车！满屏损友八卦已引爆！', '#8e44ad');
+    }
+
+    // 🎲 抽一位或一对天选董事八卦（老虎机滚动点名动画）
+    let isRolling = false;
+    function rollLuckyMember() {
+        if (isRolling) return;
+        recordActionClick();
+        isRolling = true;
+
+        const card = document.getElementById('rollResultCard');
+        const nameEl = document.getElementById('rolledMemberName');
+        const titleEl = document.getElementById('rolledMemberTitle');
+        card.classList.add('show');
+        titleEl.innerText = '🎲 正在从 48 位董事档案中机密检索八卦...';
+
+        let steps = 0;
+        const maxSteps = 18;
+        const rollInterval = setInterval(() => {
+            const [a, b] = pickTwoDistinctMembers();
+            nameEl.innerText = `${a} & ${b}`;
+            steps++;
+            if (steps >= maxSteps) {
+                clearInterval(rollInterval);
+                const activePool = prankTemplates.length > 0 ? prankTemplates : DEFAULT_PRANK_TEMPLATES;
+                const chosenTpl = pickRandom(activePool);
+                const built = buildPrankContent(chosenTpl);
+
+                if (built.hasB) {
+                    nameEl.innerText = `🔥 ${built.memberA} × ${built.memberB}`;
+                } else {
+                    nameEl.innerText = `👑 ${built.memberA}`;
+                }
+                titleEl.innerText = built.plainText;
+                lastRolledText = `【三星董事会机密爆料】${built.plainText}！`;
+                isRolling = false;
+
+                const rect = nameEl.getBoundingClientRect();
+                spawnMemberBubble({
+                    customHtml: built.htmlText,
+                    x: rect.left + rect.width / 2,
+                    y: rect.top,
+                    isClick: true
+                });
+                spawnClickParticles(rect.left + rect.width / 2, rect.top);
+            }
+        }, 65);
+    }
+
+    // 将抽签八卦结果一键填入“罗曰”加密框
+    function sendRollToEncrypt() {
+        if (!lastRolledText) return;
+        document.getElementById('inputText').value = lastRolledText;
+        encodeText();
+    }
+
+    // ==================== 自定义整活词库管理面板逻辑 ====================
+    function toggleCustomDictPanel() {
+        const panel = document.getElementById('customDictPanel');
+        panel.classList.toggle('show');
+        if (panel.classList.contains('show')) {
+            renderDictTagList();
+            document.getElementById('customTplInput').focus();
+        }
+    }
+
+    function insertPlaceholder(token) {
+        const input = document.getElementById('customTplInput');
+        const start = input.selectionStart || input.value.length;
+        const end = input.selectionEnd || input.value.length;
+        const val = input.value;
+        input.value = val.substring(0, start) + token + val.substring(end);
+        input.focus();
+        input.selectionStart = input.selectionEnd = start + token.length;
+    }
+
+    function addCustomTemplate() {
+        const input = document.getElementById('customTplInput');
+        let val = (input.value || '').trim();
+        if (!val) {
+            showMessage('请先输入自定义整活句式！', '#e67e22');
+            return;
+        }
+        // 如果用户没写 {A}，自动在最前面补上 {A}
+        if (!val.includes('{A}') && !val.includes('{B}')) {
+            val = '{A} ' + val;
+        }
+        prankTemplates.unshift(val);
+        savePrankTemplates();
+        input.value = '';
+        bubbleMode = 0;
+        document.getElementById('btnModeToggle').innerText = '🔥 模式：损友整活';
+        spawnMemberBubble({ template: val, isClick: true, x: window.innerWidth / 2, y: window.innerHeight / 3 });
+        showMessage('✓ 已添加新整活句式并立即触发！', '#27ae60');
+    }
+
+    function removeTemplateAt(idx) {
+        if (idx >= 0 && idx < prankTemplates.length) {
+            prankTemplates.splice(idx, 1);
+            savePrankTemplates();
+        }
+    }
+
+    function renderDictTagList() {
+        const listEl = document.getElementById('dictTagList');
+        const badgeEl = document.getElementById('dictCountBadge');
+        if (!listEl || !badgeEl) return;
+        badgeEl.innerText = prankTemplates.length;
+
+        if (prankTemplates.length === 0) {
+            listEl.innerHTML = '<span style="color:#94a3b8;font-size:12px;">词库为空，请添加或点击右下角恢复默认词库</span>';
+            return;
+        }
+
+        listEl.innerHTML = prankTemplates.map((tpl, idx) => {
+            const safeText = tpl.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `<span class="dict-tag-item">
+                <span>${safeText}</span>
+                <span class="dict-tag-del" title="删除此条" onclick="removeTemplateAt(${idx})">×</span>
+            </span>`;
+        }).join('');
+    }
+
+    function resetDefaultTemplates() {
+        prankTemplates = [...DEFAULT_PRANK_TEMPLATES];
+        savePrankTemplates();
+        showMessage('已恢复默认 26 条损友整活词库！', '#2980b9');
+    }
+
+    function exportTemplatesAsCode() {
+        const codeStr = "const DEFAULT_PRANK_TEMPLATES = " + JSON.stringify(prankTemplates, null, 4) + ";";
+        fallbackCopy(codeStr);
+        showMessage('📋 已将当前整活词库导出为 JS 数组并复制到剪贴板！', '#8e44ad');
+    }
+
+    // 点击网页任意空白处（非按钮、非输入框、非词库面板）立即爆出随机群友八卦气泡
+    document.addEventListener('click', function(e) {
+        const tag = (e.target.tagName || '').toLowerCase();
+        if (
+            tag === 'button' ||
+            tag === 'textarea' ||
+            tag === 'input' ||
+            e.target.closest('button') ||
+            e.target.closest('#customDictPanel') ||
+            e.target.closest('.poem-line')
+        ) {
+            return;
+        }
+        spawnMemberBubble({
+            x: e.clientX,
+            y: e.clientY,
+            isClick: true
+        });
+        spawnClickParticles(e.clientX, e.clientY);
+    });
+
+    // 初始化词库、点击量统计与群友随机冒出系统
+    loadPrankTemplates();
     initClickStats();
+    scheduleNextAutoSpawn();
 </script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
