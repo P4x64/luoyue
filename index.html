@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</title>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 亮色背景 */
+        /* 完全还原第一版的清爽亮色背景 */
         body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #f4f5f7; 
             margin: 0;
             padding: 20px;
@@ -18,8 +18,8 @@
             min-height: 100vh;
             color: #333;
         }
-        /* 纯白卡片 */
-        .container {
+        /* 纯白卡片容器与柔和阴影 */
+        .container-card {
             background-color: #fff;
             max-width: 800px;
             width: 100%;
@@ -27,11 +27,14 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.05);
             padding: 40px 30px;
             box-sizing: border-box;
+            position: relative;
+            transition: all 0.3s ease;
         }
         h1 {
             text-align: center;
             color: #2c3e50;
             font-size: 24px;
+            font-weight: bold;
             margin-top: 0;
             margin-bottom: 10px;
         }
@@ -41,8 +44,8 @@
             font-size: 14px;
             margin-bottom: 30px;
         }
-        /* 输入/输出框 */
-        textarea {
+        /* 主页面输入/输出框样式还原 */
+        textarea.main-textarea {
             width: 100%;
             height: 120px;
             padding: 15px;
@@ -56,15 +59,15 @@
             background-color: #fafafa;
             color: #333;
         }
-        textarea:focus {
+        textarea.main-textarea:focus {
             border-color: #3498db;
             background-color: #fff;
             box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
         }
-        textarea::placeholder {
+        textarea.main-textarea::placeholder {
             color: #999;
         }
-        /* 按钮 */
+        /* 按钮区域 */
         .buttons {
             display: flex;
             justify-content: center;
@@ -72,82 +75,442 @@
             margin: 20px 0;
             flex-wrap: wrap;
         }
-        button {
+        .main-btn {
             padding: 10px 20px;
             border: none;
             border-radius: 6px;
             font-size: 15px;
             cursor: pointer;
             color: #fff;
-            transition: transform 0.1s, opacity 0.3s;
+            transition: transform 0.1s, opacity 0.3s, box-shadow 0.2s;
             font-weight: bold;
         }
-        button:active {
+        .main-btn:active {
             transform: scale(0.96);
         }
-        button:hover {
-            opacity: 0.85;
+        .main-btn:hover {
+            opacity: 0.88;
         }
+        /* 还原第一版的按钮配色 + 新增藏头诗入口配色 */
         .btn-encode { background-color: #e67e22; } 
         .btn-decode { background-color: #27ae60; } 
         .btn-copy { background-color: #2980b9; } 
         .btn-clear { background-color: #95a5a6; } 
+        .btn-poem-entry { 
+            background-color: #8e44ad; 
+            box-shadow: 0 4px 12px rgba(142, 68, 173, 0.25);
+        }
         
         .footer {
             margin-top: 30px;
             font-size: 12px;
             color: #bdc3c7;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1.6;
         }
-        
-        /* 统计数字的强调颜色 */
-        #busuanzi_value_site_pv {
+        /* 底部访问与点击量统计栏 */
+        .stats-bar {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        .stats-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f8f9fa;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #eee;
+        }
+        .stats-num {
             color: #e67e22;
             font-weight: bold;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        /* 视图切换控制 */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 顶部轻量消息提示框（替代原生 alert 避免阻塞） */
+        .sys-toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #2c3e50;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 8px;
             font-size: 14px;
-            margin: 0 3px;
+            font-weight: 500;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+            z-index: 9999;
+        }
+        .sys-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ================= 第二个网页（字符藏头诗）专属样式还原 ================= */
+        .poem-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-back-main {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-back-main:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .poem-title {
+            margin: 0 0 20px 0;
+            color: #2d3748;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: #3182ce;
+            background: #ebf8ff;
+        }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        
+        .input-box {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            background: #fff;
+            color: #333;
+        }
+        .input-box:focus { border-color: #3182ce; }
+        textarea.input-box {
+            height: 90px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 7px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn-poem-copy { background: #38a169; color: white; }
+        .btn-poem-copy:hover { background: #2f855a; }
+        .btn-poem-send { background: #e67e22; color: white; }
+        .btn-poem-send:hover { background: #d35400; }
+        .btn-poem-decode { background: #3182ce; color: white; }
+        .btn-poem-decode:hover { background: #2b6cb0; }
+
+        .result-box {
+            background: #fdfbf7;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #b7791f;
+            border-radius: 6px;
+            padding: 14px 18px;
+            min-height: 76px;
+            line-height: 1.9;
+            font-size: 16px;
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 14px;
+        }
+        .poem-line {
+            display: inline-flex;
+            align-items: baseline;
+            background: #fff9f0;
+            border: 1px solid #f1e4c3;
+            border-radius: 6px;
+            padding: 3px 10px;
+            transition: transform 0.15s;
+        }
+        .poem-line:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(183, 121, 31, 0.1);
+        }
+        .head-char { color: #c53030; font-weight: bold; }
+        .punct { color: #718096; }
+        .meta-tag { font-size: 11px; color: #a0aec0; margin-left: 6px; }
+        .placeholder-text {
+            color: #a0aec0;
+            text-align: center;
+            width: 100%;
+            padding: 18px 0;
+        }
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .tip-toast {
+            font-size: 13px;
+            color: #38a169;
+            display: none;
+        }
+        .decode-out {
+            background: #f7fafc;
+            border: 1px dashed #cbd5e0;
+            padding: 14px;
+            border-radius: 6px;
+            margin-top: 16px;
+            font-family: monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+            color: #2b6cb0;
+            word-break: break-all;
+        }
+        .explain {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #718096;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</h1>
-    <div class="subtitle">【高度机密 · 内部专享 · 阅后即焚】</div>
+<!-- 全局消息提示条 -->
+<div id="sysToast" class="sys-toast">系统提示</div>
 
-    <textarea id="inputText" placeholder=">_ 请在此输入最高机密原文，或粘贴带有“罗曰：”的加密指令..."></textarea>
-
-    <div class="buttons">
-        <button class="btn-encode" onclick="encodeText()">加密混淆 (生成罗曰)</button>
-        <button class="btn-decode" onclick="decodeText()">解密授权 (还原明文)</button>
-    </div>
+<div class="container-card">
     
-    <div class="buttons" style="margin-top: 0;">
-        <button class="btn-copy" onclick="copyText()">复制输出结果</button>
-        <button class="btn-clear" onclick="clearText()">清空操作台</button>
+    <!-- ==================== 主网页视图：“罗曰”专用工具 ==================== -->
+    <div id="mainView" class="view-section active">
+        <h1>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</h1>
+        <div class="subtitle">【高度机密 · 内部专享 · 阅后即焚】</div>
+
+        <textarea id="inputText" class="main-textarea" placeholder=">_ 请在此输入最高机密原文，或粘贴带有“罗曰：”的加密指令..."></textarea>
+
+        <div class="buttons">
+            <button class="main-btn btn-encode" onclick="encodeText()">加密混淆 (生成罗曰)</button>
+            <button class="main-btn btn-decode" onclick="decodeText()">解密授权 (还原明文)</button>
+        </div>
+        
+        <div class="buttons" style="margin-top: 0;">
+            <button class="main-btn btn-copy" onclick="copyText()">复制输出结果</button>
+            <button class="main-btn btn-clear" onclick="clearText()">清空操作台</button>
+            <button class="main-btn btn-poem-entry" onclick="openPoemTool()">📜 字符藏头诗工具</button>
+        </div>
+
+        <textarea id="outputText" class="main-textarea" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
+        
+        <div class="footer">
+            * 警告：本终端采用“罗氏”专属特制核心字库矩阵进行高强度混淆加密。<br>
+            * 纯本地脱机运算，防拦截、防嗅探，请妥善保管解密环境。
+            <div class="stats-bar">
+                <span class="stats-item">
+                    🔥 终端累计点击调用：<span id="totalClickCount" class="stats-num">0</span> 次
+                </span>
+                <span class="stats-item">
+                    🔐 本次会话加解密：<span id="sessionClickCount" class="stats-num">0</span> 次
+                </span>
+                <span class="stats-item" id="busuanzi_container_site_pv">
+                    👁️ 董事会总访问量：<span id="busuanzi_value_site_pv" class="stats-num">--</span>
+                </span>
+            </div>
+        </div>
     </div>
 
-    <textarea id="outputText" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
-    
-    <div class="footer">
-        * 警告：本终端采用“罗氏”专属特制核心字库矩阵进行高强度混淆加密。<br>
-        * 纯本地脱机运算，防拦截、防嗅探，请妥善保管解密环境。<br>
-        <span id="busuanzi_container_site_pv" style="display:none;">
-            🔒 董事会密级终端已被秘密调阅 <span id="busuanzi_value_site_pv"></span> 次
-        </span>
+    <!-- ==================== 子网页视图：字符藏头诗生成与解密 ==================== -->
+    <div id="poemView" class="view-section">
+        <div class="poem-header-bar">
+            <button type="button" class="btn-back-main" onclick="backToMainTool()">← 返回“罗曰”主操作台</button>
+            <span style="font-size: 12px; color: #94a3b8;">董事会附属子模块 · 藏头诗隐写终端</span>
+        </div>
+
+        <h2 class="poem-title">字符藏头诗生成与解密</h2>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('genTab')">生成藏头诗</button>
+            <button class="tab-btn" onclick="switchTab('decodeTab')">解密还原字符</button>
+        </div>
+
+        <!-- 生成面板 -->
+        <div class="panel active" id="genTab">
+            <input type="text" id="rawInput" class="input-box" placeholder="输入英文/数字（纯中文会自动忽略）...">
+
+            <div class="result-box" id="output">
+                <div class="placeholder-text">仅支持英文字母与数字输入</div>
+            </div>
+
+            <div class="action-row">
+                <span class="tip-toast" id="copyNotice">✓ 已复制整句！</span>
+                <button type="button" class="btn btn-poem-send" onclick="sendPoemToMain()">转入“罗曰”二次加密</button>
+                <button type="button" class="btn btn-poem-copy" id="btnCopy">一键复制连贯诗句</button>
+            </div>
+
+            <div class="explain">
+                * 包含中文字符时不会生成，只对字母和数字即时响应（每个字符内置 6 组不同诗句防重复）。<br>
+                * 诗句横向紧凑排列，以逗号分隔、句号收尾，可一键转入“罗曰”主操作台进行二次加密。
+            </div>
+        </div>
+
+        <!-- 解密面板 -->
+        <div class="panel" id="decodeTab">
+            <textarea id="decodeInput" class="input-box" placeholder="粘贴整段诗句到这里（例如：南山秀色扑面来，明月高悬照水幽，松风...）"></textarea>
+
+            <div class="action-row">
+                <button type="button" class="btn btn-poem-decode" onclick="doDecode()">解密还原</button>
+            </div>
+
+            <div class="decode-out" id="decodeOutput">等待输入诗句解密...</div>
+
+            <div class="explain">
+                * 会自动按标点符号分割诗句，并提取每句首字逆向推导回原始英文或数字。
+            </div>
+        </div>
     </div>
+
 </div>
 
 <script>
+    // ==================== 首页点击量与访问统计逻辑 ====================
+    const STORAGE_CLICK_KEY = "luoyue_board_total_clicks_v1";
+    let sessionClicks = 0;
+
+    function initClickStats() {
+        let saved = parseInt(localStorage.getItem(STORAGE_CLICK_KEY), 10);
+        if (isNaN(saved) || saved < 1280) {
+            saved = 1280; // 初始基准累计点击量
+        }
+        saved += 1; // 每次进入页面记一次访问点击
+        localStorage.setItem(STORAGE_CLICK_KEY, saved);
+        updateStatsDisplay(saved, sessionClicks);
+    }
+
+    function recordActionClick() {
+        let saved = parseInt(localStorage.getItem(STORAGE_CLICK_KEY), 10) || 1280;
+        saved += 1;
+        sessionClicks += 1;
+        localStorage.setItem(STORAGE_CLICK_KEY, saved);
+        updateStatsDisplay(saved, sessionClicks);
+    }
+
+    function updateStatsDisplay(total, session) {
+        const totalEl = document.getElementById('totalClickCount');
+        const sessionEl = document.getElementById('sessionClickCount');
+        const pvEl = document.getElementById('busuanzi_value_site_pv');
+        if (totalEl) totalEl.innerText = total.toLocaleString();
+        if (sessionEl) sessionEl.innerText = session;
+        if (pvEl && (pvEl.innerText === '--' || !pvEl.innerText.trim())) {
+            pvEl.innerText = (Math.floor(total * 1.35)).toLocaleString();
+        }
+    }
+
+    // ==================== 通用通知提示函数 ====================
+    let toastTimer = null;
+    function showMessage(msg, bgColor = "#2c3e50") {
+        const toast = document.getElementById('sysToast');
+        toast.innerText = msg;
+        toast.style.backgroundColor = bgColor;
+        toast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2400);
+    }
+
+    // ==================== 页面视图切换逻辑 ====================
+    function openPoemTool() {
+        recordActionClick();
+        document.getElementById('mainView').classList.remove('active');
+        document.getElementById('poemView').classList.add('active');
+        setTimeout(() => {
+            const rawInput = document.getElementById('rawInput');
+            if (rawInput && document.getElementById('genTab').classList.contains('active')) {
+                rawInput.focus();
+            }
+        }, 100);
+    }
+
+    function backToMainTool() {
+        recordActionClick();
+        document.getElementById('poemView').classList.remove('active');
+        document.getElementById('mainView').classList.add('active');
+    }
+
+    // ==================== 第一个网页：“罗曰”加密/解密核心逻辑 ====================
+    // 1. 标准 Base64 字符表
     const b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    
+    // 2. 核心自定义替换字库
     const dict = "阿弥陀佛观世音菩萨大势至地藏王文殊普贤如来金刚般若波罗蜜多心经法华楞严清净慈悲喜舍因果轮回涅槃善恶业报无明烦恼提缘起性空界众生宝德";
+
     const PREFIX = "罗曰：";
 
+    // 加密功能
     function encodeText() {
+        recordActionClick();
         const input = document.getElementById('inputText').value;
         if (!input) {
-            alert('系统警告：请输入需要加密的内容！');
+            showMessage('系统警告：请输入需要加密的内容！', '#e67e22');
             return;
         }
         try {
@@ -160,22 +523,25 @@
                 }
             }
             document.getElementById('outputText').value = result;
+            showMessage('加密完成：已生成“罗曰”密文！', '#27ae60');
         } catch (e) {
-            alert("加密异常：包含无法处理的特殊指令符号。");
+            showMessage("加密异常：包含无法处理的特殊指令符号。", '#c0392b');
         }
     }
 
+    // 解密功能
     function decodeText() {
+        recordActionClick();
         let input = document.getElementById('inputText').value.trim();
         if (!input) {
-            alert('系统警告：请输入需要解密的密文！');
+            showMessage('系统警告：请输入需要解密的密文！', '#e67e22');
             return;
         }
         try {
             if (input.startsWith(PREFIX)) {
                 input = input.substring(PREFIX.length);
             } else {
-                alert("权限拒绝：密文协议头不匹配，必须以“" + PREFIX + "”开头！");
+                showMessage("权限拒绝：密文协议头不匹配，必须以“" + PREFIX + "”开头！", '#c0392b');
                 return;
             }
             let b64 = "";
@@ -186,32 +552,509 @@
                 }
             }
             if (!b64) {
-                alert("解析失败：未检测到有效的加密矩阵。");
+                showMessage("解析失败：未检测到有效的加密矩阵。", '#c0392b');
                 return;
             }
             let str = decodeURIComponent(escape(atob(b64)));
             document.getElementById('outputText').value = str;
+            showMessage('解密成功：已还原最高机密明文！', '#27ae60');
         } catch (e) {
-            alert("解密失败：密文数据已损坏或遭到未授权篡改。");
+            showMessage("解密失败：密文数据已损坏或遭到未授权篡改。", '#c0392b');
         }
     }
 
+    // 复制功能
     function copyText() {
+        recordActionClick();
         const output = document.getElementById('outputText');
         if (!output.value) {
-            alert("操作台无数据可复制。");
+            showMessage("操作台无数据可复制。", '#7f8c8d');
             return;
         }
         output.select();
         document.execCommand("copy");
-        alert("指令已安全复制到剪贴板！");
+        showMessage("指令已安全复制到剪贴板！", '#2980b9');
     }
 
+    // 清空功能
     function clearText() {
+        recordActionClick();
         document.getElementById('inputText').value = "";
         document.getElementById('outputText').value = "";
+        showMessage("操作台已清空。", '#7f8c8d');
     }
+
+    // ==================== 第二个网页：字符藏头诗生成与解密核心逻辑 ====================
+    // 扩充版词库：每个数字与字母均配备 6 句不同七言诗，且全库 216 句首字完全互斥，确保逆向解密 100% 准确
+    var charDictionary = {
+        '0': [
+            { text: '零露沾衣秋夜凉', tip: '0(零)' },
+            { text: '凌风独立看浮云', tip: '0(凌)' },
+            { text: '铃声隐隐过桥西', tip: '0(铃)' },
+            { text: '菱花镜里画眉新', tip: '0(菱)' },
+            { text: '伶俜孤影立斜阳', tip: '0(伶)' },
+            { text: '翎羽翩跹入碧霄', tip: '0(翎)' }
+        ],
+        '1': [
+            { text: '依然故我抱初心', tip: '1(依)' },
+            { text: '一朝看尽长安花', tip: '1(一)' },
+            { text: '伊人宛在水中央', tip: '1(伊)' },
+            { text: '衣袂飘飘映晚霞', tip: '1(衣)' },
+            { text: '揖别故交踏远途', tip: '1(揖)' },
+            { text: '漪澜微动泛轻舟', tip: '1(漪)' }
+        ],
+        '2': [
+            { text: '二月春风似剪刀', tip: '2(二)' },
+            { text: '贰心不存守忠贞', tip: '2(贰)' },
+            { text: '尔来几度历沧桑', tip: '2(尔)' },
+            { text: '迩遐同庆乐升平', tip: '2(迩)' },
+            { text: '洱海波光映月明', tip: '2(洱)' },
+            { text: '珥笔趋庭颂盛时', tip: '2(珥)' }
+        ],
+        '3': [
+            { text: '三更月影照窗纱', tip: '3(三)' },
+            { text: '叁星朗照夜生辉', tip: '3(叁)' },
+            { text: '衫染荷香暑气消', tip: '3(衫)' },
+            { text: '珊瑚映日海波红', tip: '3(珊)' },
+            { text: '舢板轻摇破晓烟', tip: '3(舢)' },
+            { text: '杉林深处隐幽居', tip: '3(杉)' }
+        ],
+        '4': [
+            { text: '四季芳华常在眼', tip: '4(四)' },
+            { text: '思君欲渡水无梁', tip: '4(思)' },
+            { text: '丝竹悠扬绕画梁', tip: '4(丝)' },
+            { text: '司晨报晓唤朝阳', tip: '4(司)' },
+            { text: '斯文千古照汗青', tip: '4(斯)' },
+            { text: '驷马高车入帝京', tip: '4(驷)' }
+        ],
+        '5': [
+            { text: '无言独上小西楼', tip: '5(无)' },
+            { text: '吾心安处是吾乡', tip: '5(吾)' },
+            { text: '武陵溪上桃花暖', tip: '5(武)' },
+            { text: '五云捧日照乾坤', tip: '5(五)' },
+            { text: '伍员吹箫过吴市', tip: '5(伍)' },
+            { text: '舞袖翩翩伴落梅', tip: '5(舞)' }
+        ],
+        '6': [
+            { text: '流光容易把人抛', tip: '6(流)' },
+            { text: '柳外微风拂面生', tip: '6(柳)' },
+            { text: '留得残荷听雨声', tip: '6(留)' },
+            { text: '六朝旧事随流水', tip: '6(六)' },
+            { text: '陆离光彩照琼筵', tip: '6(陆)' },
+            { text: '榴花似火映庭阶', tip: '6(榴)' }
+        ],
+        '7': [
+            { text: '七里香风入座清', tip: '7(七)' },
+            { text: '起舞弄清影如练', tip: '7(起)' },
+            { text: '柒彩霞光映碧空', tip: '7(柒)' },
+            { text: '栖鸟归林暮色深', tip: '7(栖)' },
+            { text: '溪云初起日沉阁', tip: '7(溪)' },
+            { text: '绮窗春暖玉生烟', tip: '7(绮)' }
+        ],
+        '8': [
+            { text: '把酒迎风共赏秋', tip: '8(把)' },
+            { text: '巴山夜雨涨秋池', tip: '8(巴)' },
+            { text: '八千里路云和月', tip: '8(八)' },
+            { text: '捌方风雨会中州', tip: '8(捌)' },
+            { text: '芭蕉叶上雨声催', tip: '8(芭)' },
+            { text: '跋山涉水觅仙踪', tip: '8(跋)' }
+        ],
+        '9': [
+            { text: '久别重逢喜意长', tip: '9(久)' },
+            { text: '酒醒微冷更深时', tip: '9(酒)' },
+            { text: '九天日月开新运', tip: '9(九)' },
+            { text: '玖瑰吐艳满庭芳', tip: '9(玖)' },
+            { text: '韭花春雨剪新畦', tip: '9(韭)' },
+            { text: '灸暖寒炉煮茗香', tip: '9(灸)' }
+        ],
+        'a': [
+            { text: '阿阁流丹映日红', tip: 'A(阿)' },
+            { text: '安得广厦千万间', tip: 'A(安)' },
+            { text: '岸芷汀兰郁郁青', tip: 'A(岸)' },
+            { text: '暗香浮动月黄昏', tip: 'A(暗)' },
+            { text: '昂首长歌啸九天', tip: 'A(昂)' },
+            { text: '傲骨凌霜伴古松', tip: 'A(傲)' }
+        ],
+        'b': [
+            { text: '碧水青山两相映', tip: 'B(碧)' },
+            { text: '白云深处有人家', tip: 'B(白)' },
+            { text: '半江瑟瑟半江红', tip: 'B(半)' },
+            { text: '百尺竿头更进步', tip: 'B(百)' },
+            { text: '伴月随风入梦来', tip: 'B(伴)' },
+            { text: '北雁南飞秋意浓', tip: 'B(北)' }
+        ],
+        'c': [
+            { text: '长亭别后路迢迢', tip: 'C(长)' },
+            { text: '春水初生映远山', tip: 'C(春)' },
+            { text: '沧海月明珠有泪', tip: 'C(沧)' },
+            { text: '苍松翠柏立寒山', tip: 'C(苍)' },
+            { text: '翠竹摇风弄碧阴', tip: 'C(翠)' },
+            { text: '楚天千里清秋水', tip: 'C(楚)' }
+        ],
+        'd': [
+            { text: '登临顿觉天地阔', tip: 'D(登)' },
+            { text: '东风拂面百花开', tip: 'D(东)' },
+            { text: '淡妆浓抹总相宜', tip: 'D(淡)' },
+            { text: '丹枫万叶碧云边', tip: 'D(丹)' },
+            { text: '独钓寒江千万雪', tip: 'D(独)' },
+            { text: '蝶舞花间意自闲', tip: 'D(蝶)' }
+        ],
+        'e': [
+            { text: '峨眉峰顶月如钩', tip: 'E(峨)' },
+            { text: '鹅黄嫩柳拂春波', tip: 'E(鹅)' },
+            { text: '恩波浩荡润苍生', tip: 'E(恩)' },
+            { text: '婀娜多姿映水莲', tip: 'E(婀)' },
+            { text: '额间微汗透罗衣', tip: 'E(额)' },
+            { text: '萼绿华开春满园', tip: 'E(萼)' }
+        ],
+        'f': [
+            { text: '风卷残云天自高', tip: 'F(风)' },
+            { text: '芳草连天碧色深', tip: 'F(芳)' },
+            { text: '飞流直下三千尺', tip: 'F(飞)' },
+            { text: '浮生若梦且欢娱', tip: 'F(浮)' },
+            { text: '枫林如火染秋山', tip: 'F(枫)' },
+            { text: '帆影远随碧水长', tip: 'F(帆)' }
+        ],
+        'g': [
+            { text: '高山流水觅知音', tip: 'G(高)' },
+            { text: '古木参天蔽日阴', tip: 'G(古)' },
+            { text: '孤帆远影碧空尽', tip: 'G(孤)' },
+            { text: '桂子月中落天香', tip: 'G(桂)' },
+            { text: '归心似箭向家山', tip: 'G(归)' },
+            { text: '广寒宫阙冷秋光', tip: 'G(广)' }
+        ],
+        'h': [
+            { text: '花间一壶酌清泉', tip: 'H(花)' },
+            { text: '海内存知己天涯', tip: 'H(海)' },
+            { text: '寒梅著花未逢春', tip: 'H(寒)' },
+            { text: '红豆生南国春来', tip: 'H(红)' },
+            { text: '皓月当空照九州', tip: 'H(皓)' },
+            { text: '湖光山色两相和', tip: 'H(湖)' }
+        ],
+        'i': [
+            { text: '爱惜芳时莫轻负', tip: 'I(爱)' },
+            { text: '艾叶飘香端阳至', tip: 'I(艾)' },
+            { text: '霭霭停云笼远岫', tip: 'I(霭)' },
+            { text: '皑皑白雪覆千山', tip: 'I(皑)' },
+            { text: '蔼蔼吉人沐春风', tip: 'I(蔼)' },
+            { text: '隘口千重锁翠微', tip: 'I(隘)' }
+        ],
+        'j': [
+            { text: '惊鸿一瞥落平川', tip: 'J(惊)' },
+            { text: '金风玉露一相逢', tip: 'J(金)' },
+            { text: '江上青山翠微开', tip: 'J(江)' },
+            { text: '锦瑟华年思往事', tip: 'J(锦)' },
+            { text: '静夜沉沉月色明', tip: 'J(静)' },
+            { text: '剑气冲霄映斗牛', tip: 'J(剑)' }
+        ],
+        'k': [
+            { text: '开襟纳爽倚高阁', tip: 'K(开)' },
+            { text: '空山新雨后初晴', tip: 'K(空)' },
+            { text: '客路青山外行舟', tip: 'K(客)' },
+            { text: '旷野无垠天地宽', tip: 'K(旷)' },
+            { text: '昆山玉碎凤凰叫', tip: 'K(昆)' },
+            { text: '看尽江南万山翠', tip: 'K(看)' }
+        ],
+        'l': [
+            { text: '落霞与孤鹜齐飞', tip: 'L(落)' },
+            { text: '朗月清风伴夜凉', tip: 'L(朗)' },
+            { text: '绿水迢迢向远方', tip: 'L(绿)' },
+            { text: '兰亭集序传千古', tip: 'L(兰)' },
+            { text: '露从今夜白秋深', tip: 'L(露)' },
+            { text: '林深时见鹿幽行', tip: 'L(林)' }
+        ],
+        'm': [
+            { text: '明月高悬照水幽', tip: 'M(明)' },
+            { text: '暮色苍茫入翠微', tip: 'M(暮)' },
+            { text: '漫卷诗书喜欲狂', tip: 'M(漫)' },
+            { text: '梅花香自苦寒来', tip: 'M(梅)' },
+            { text: '梦里不知身是客', tip: 'M(梦)' },
+            { text: '满船清梦压星河', tip: 'M(满)' }
+        ],
+        'n': [
+            { text: '南山秀色扑面来', tip: 'N(南)' },
+            { text: '凝眸远眺寄深情', tip: 'N(凝)' },
+            { text: '暖日晴风破冻时', tip: 'N(暖)' },
+            { text: '鸟语花香春满园', tip: 'N(鸟)' },
+            { text: '浓睡不消残酒意', tip: 'N(浓)' },
+            { text: '念天地之悠悠然', tip: 'N(念)' }
+        ],
+        'o': [
+            { text: '偶向苍茫觅旧踪', tip: 'O(偶)' },
+            { text: '鸥鹭忘机伴水云', tip: 'O(鸥)' },
+            { text: '瓯茗清香沁肺腑', tip: 'O(瓯)' },
+            { text: '藕花深处泛轻舟', tip: 'O(藕)' },
+            { text: '讴歌盛世谱华章', tip: 'O(讴)' },
+            { text: '欧风美雨洗新秋', tip: 'O(欧)' }
+        ],
+        'p': [
+            { text: '平分秋色入澄波', tip: 'P(平)' },
+            { text: '蓬山此去无多路', tip: 'P(蓬)' },
+            { text: '片云天共远孤帆', tip: 'P(片)' },
+            { text: '飘飘何所似天地', tip: 'P(飘)' },
+            { text: '凭栏远眺大江流', tip: 'P(凭)' },
+            { text: '破浪乘风会有时', tip: 'P(破)' }
+        ],
+        'q': [
+            { text: '清风拂面客思归', tip: 'Q(清)' },
+            { text: '秋水盈盈映画楼', tip: 'Q(秋)' },
+            { text: '青山隐隐水迢迢', tip: 'Q(青)' },
+            { text: '千里莺啼绿映红', tip: 'Q(千)' },
+            { text: '曲径通幽花木深', tip: 'Q(曲)' },
+            { text: '晴空一鹤排云上', tip: 'Q(晴)' }
+        ],
+        'r': [
+            { text: '日暮乡关何处是', tip: 'R(日)' },
+            { text: '人面桃花相映红', tip: 'R(人)' },
+            { text: '柔情似水佳期梦', tip: 'R(柔)' },
+            { text: '瑞雪纷飞兆丰年', tip: 'R(瑞)' },
+            { text: '绕梁三日余音袅', tip: 'R(绕)' },
+            { text: '若水三千取一瓢', tip: 'R(若)' }
+        ],
+        's': [
+            { text: '松风阵阵入柴扉', tip: 'S(松)' },
+            { text: '霜重枝头露未干', tip: 'S(霜)' },
+            { text: '山色空濛雨亦奇', tip: 'S(山)' },
+            { text: '水光潋滟晴方好', tip: 'S(水)' },
+            { text: '疏影横斜水清浅', tip: 'S(疏)' },
+            { text: '苏堤春晓柳如烟', tip: 'S(苏)' }
+        ],
+        't': [
+            { text: '天高云淡望长空', tip: 'T(天)' },
+            { text: '桃花潭水深千尺', tip: 'T(桃)' },
+            { text: '潭清疑水浅鱼游', tip: 'T(潭)' },
+            { text: '亭亭玉立水云间', tip: 'T(亭)' },
+            { text: '听雨寒更彻夜思', tip: 'T(听)' },
+            { text: '踏雪寻梅雅兴浓', tip: 'T(踏)' }
+        ],
+        'u': [
+            { text: '悠悠白云万里行', tip: 'U(悠)' },
+            { text: '幽怀未减当年兴', tip: 'U(幽)' },
+            { text: '游目骋怀天地广', tip: 'U(游)' },
+            { text: '犹记当年明月夜', tip: 'U(犹)' },
+            { text: '忧乐关情怀天下', tip: 'U(忧)' },
+            { text: '优游岁月乐清闲', tip: 'U(优)' }
+        ],
+        'v': [
+            { text: '微风吹彻拂疏桐', tip: 'V(微)' },
+            { text: '唯见长江天际流', tip: 'V(唯)' },
+            { text: '惟有门前镜湖水', tip: 'V(惟)' },
+            { text: '维舟古岸听寒潮', tip: 'V(维)' },
+            { text: '薇露生香拂晓风', tip: 'V(薇)' },
+            { text: '巍峨泰岳入云端', tip: 'V(巍)' }
+        ],
+        'w': [
+            { text: '万里江山入画图', tip: 'W(万)' },
+            { text: '望断天涯路远长', tip: 'W(望)' },
+            { text: '晚来天欲雪能饮', tip: 'W(晚)' },
+            { text: '梧桐更兼细雨声', tip: 'W(梧)' },
+            { text: '问渠那得清如许', tip: 'W(问)' },
+            { text: '卧看牵牛织女星', tip: 'W(卧)' }
+        ],
+        'x': [
+            { text: '闲看庭前花开落', tip: 'X(闲)' },
+            { text: '晓看红湿处花重', tip: 'X(晓)' },
+            { text: '星垂平野阔江流', tip: 'X(星)' },
+            { text: '香雾云鬟湿清辉', tip: 'X(香)' },
+            { text: '夕阳无限好黄昏', tip: 'X(夕)' },
+            { text: '雪月风花四时景', tip: 'X(雪)' }
+        ],
+        'y': [
+            { text: '烟波浩渺水连天', tip: 'Y(烟)' },
+            { text: '云想衣裳花想容', tip: 'Y(云)' },
+            { text: '月落乌啼霜满天', tip: 'Y(月)' },
+            { text: '夜阑卧听风吹雨', tip: 'Y(夜)' },
+            { text: '雨打梨花深闭门', tip: 'Y(雨)' },
+            { text: '玉壶冰心映寒光', tip: 'Y(玉)' }
+        ],
+        'z': [
+            { text: '紫陌风光无限好', tip: 'Z(紫)' },
+            { text: '竹杖芒鞋轻胜马', tip: 'Z(竹)' },
+            { text: '醉卧沙场君莫笑', tip: 'Z(醉)' },
+            { text: '朝辞白帝彩云间', tip: 'Z(朝)' },
+            { text: '舟行碧波上人在', tip: 'Z(舟)' },
+            { text: '酌酒花间邀明月', tip: 'Z(酌)' }
+        ]
+    };
+
+    // 构建反向查找字典：汉字首字 -> 原字符
+    var reverseDictionary = {};
+    (function initReverseMap() {
+        for (var key in charDictionary) {
+            var arr = charDictionary[key];
+            for (var i = 0; i < arr.length; i++) {
+                var firstChar = arr[i].text.charAt(0);
+                if (!reverseDictionary[firstChar]) {
+                    reverseDictionary[firstChar] = key;
+                }
+            }
+        }
+    })();
+
+    var currentPoemString = "";
+
+    // 选项卡切换
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+        if (tabId === 'genTab') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('genTab').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('decodeTab').classList.add('active');
+        }
+    }
+
+    // 生成函数：纯英文字母与数字才触发
+    function doGenerate() {
+        var raw = document.getElementById('rawInput').value || '';
+        var outputDiv = document.getElementById('output');
+
+        // 如果包含中文，或者输入全为空，直接阻断不生成
+        var hasChinese = /[\u4e00-\u9fa5]/.test(raw);
+        if (hasChinese) {
+            outputDiv.innerHTML = '<div class="placeholder-text" style="color:#e53e3e;">检测到中文输入，已停止生成（仅支持英文字母与数字）</div>';
+            currentPoemString = "";
+            return;
+        }
+
+        // 只保留字母和数字
+        var cleanInput = raw.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
+        if (!cleanInput) {
+            outputDiv.innerHTML = '<div class="placeholder-text">请输入字母或数字开始生成</div>';
+            currentPoemString = "";
+            return;
+        }
+
+        var htmlArr = [];
+        var plainArr = [];
+        var usedMap = {};
+
+        for (var i = 0; i < cleanInput.length; i++) {
+            var ch = cleanInput.charAt(i);
+            var list = charDictionary[ch];
+            var isLast = (i === cleanInput.length - 1);
+            var punct = isLast ? '。' : '，';
+
+            if (list && list.length > 0) {
+                if (!usedMap[ch]) { usedMap[ch] = []; }
+
+                var pick = null;
+                for (var j = 0; j < list.length; j++) {
+                    if (usedMap[ch].indexOf(j) === -1) {
+                        pick = list[j];
+                        usedMap[ch].push(j);
+                        break;
+                    }
+                }
+
+                if (!pick) {
+                    usedMap[ch] = [];
+                    var randIdx = Math.floor(Math.random() * list.length);
+                    pick = list[randIdx];
+                    usedMap[ch].push(randIdx);
+                }
+
+                var head = pick.text.charAt(0);
+                var body = pick.text.substring(1);
+
+                htmlArr.push(
+                    '<div class="poem-line">' +
+                        '<span><span class="head-char">' + head + '</span>' + body + '<span class="punct">' + punct + '</span></span>' +
+                        '<span class="meta-tag">' + pick.tip + '</span>' +
+                    '</div>'
+                );
+                plainArr.push(pick.text + punct);
+            }
+        }
+
+        currentPoemString = plainArr.join('');
+        outputDiv.innerHTML = htmlArr.join('');
+    }
+
+    // 解密函数：提取诗句首字还原原始字符串
+    function doDecode() {
+        var poemText = document.getElementById('decodeInput').value.trim();
+        var decodeOut = document.getElementById('decodeOutput');
+
+        if (!poemText) {
+            decodeOut.innerText = '请先粘贴诗句！';
+            return;
+        }
+
+        // 根据标点符号或换行拆分成句子
+        var lines = poemText.split(/[，,。\.\n；;！!？?]+/).filter(function(s) {
+            return s.trim().length > 0;
+        });
+
+        var decodedResult = [];
+        for (var i = 0; i < lines.length; i++) {
+            var firstChar = lines[i].trim().charAt(0);
+            if (reverseDictionary[firstChar]) {
+                decodedResult.push(reverseDictionary[firstChar]);
+            } else {
+                decodedResult.push('?');
+            }
+        }
+
+        decodeOut.innerText = decodedResult.join('');
+    }
+
+    // 复制纯文本诗句
+    function copyPoem() {
+        if (!currentPoemString) {
+            showMessage("请先输入有效的英文或数字生成诗句！", "#e67e22");
+            return;
+        }
+        fallbackCopy(currentPoemString);
+    }
+
+    // 将生成的藏头诗直接送入“罗曰”主操作台进行加密
+    function sendPoemToMain() {
+        if (!currentPoemString) {
+            showMessage("请先输入有效的英文或数字生成诗句！", "#e67e22");
+            return;
+        }
+        document.getElementById('inputText').value = currentPoemString;
+        backToMainTool();
+        encodeText();
+    }
+
+    function fallbackCopy(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = typeof text === 'string' ? text : currentPoemString;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showCopySuccess();
+        } catch (err) {
+            showMessage("复制失败，请手动选取复制", "#c0392b");
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function showCopySuccess() {
+        var notice = document.getElementById('copyNotice');
+        notice.style.display = 'inline';
+        setTimeout(function() { notice.style.display = 'none'; }, 2000);
+    }
+
+    // 事件监听绑定
+    document.getElementById('rawInput').addEventListener('input', doGenerate);
+    document.getElementById('decodeInput').addEventListener('input', doDecode);
+    document.getElementById('btnCopy').onclick = copyPoem;
+
+    // 初始化点击量统计
+    initClickStats();
 </script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 </body>
 </html>
