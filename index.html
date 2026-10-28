@@ -42,7 +42,7 @@
             text-align: center;
             color: #7f8c8d;
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
         /* 主页面输入/输出框样式还原 */
         textarea.main-textarea {
@@ -67,6 +67,59 @@
         textarea.main-textarea::placeholder {
             color: #999;
         }
+
+        /* 磁力智能净化与自动化工具条 */
+        .magnet-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #475569;
+        }
+        .magnet-switches {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .magnet-switch-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            color: #334155;
+        }
+        .magnet-switch-label input[type="checkbox"] {
+            accent-color: #e67e22;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+        .magnet-status-badge {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+            font-weight: 600;
+            display: none;
+        }
+        .magnet-status-badge.show {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* 按钮区域 */
         .buttons {
             display: flex;
@@ -91,7 +144,7 @@
         .main-btn:hover {
             opacity: 0.88;
         }
-        /* 还原第一版的按钮配色 + 新增藏头诗入口配色 */
+        /* 还原第一版的按钮配色 + 藏头诗入口配色 */
         .btn-encode { background-color: #e67e22; } 
         .btn-decode { background-color: #27ae60; } 
         .btn-copy { background-color: #2980b9; } 
@@ -137,7 +190,7 @@
             font-size: 13px;
         }
 
-        /* ================= 新增：群友名字全屏随机冒出与互动控制台样式 ================= */
+        /* ================= 群友名字全屏随机冒出与互动控制台样式 ================= */
         #floatingNamesLayer {
             position: fixed;
             inset: 0;
@@ -374,6 +427,68 @@
             background: #e2e8f0;
         }
 
+        /* 解密后磁力快捷操作栏 */
+        .decoded-magnet-bar {
+            margin-top: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 13px;
+            color: #166534;
+        }
+        .decoded-magnet-bar.show {
+            display: flex;
+        }
+        .btn-open-magnet {
+            background: #16a34a;
+            color: #fff;
+            border: none;
+            padding: 6px 13px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-open-magnet:hover {
+            background: #15803d;
+        }
+        .btn-open-magnet:active {
+            transform: scale(0.96);
+        }
+        .btn-open-quark {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border: none;
+            padding: 6px 13px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-open-quark:hover {
+            opacity: 0.92;
+        }
+        .btn-open-quark:active {
+            transform: scale(0.96);
+        }
+
         /* 视图切换控制 */
         .view-section {
             display: none;
@@ -586,7 +701,28 @@
         <h1>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</h1>
         <div class="subtitle">【高度机密 · 内部专享 · 阅后即焚】</div>
 
-        <textarea id="inputText" class="main-textarea" placeholder=">_ 请在此输入最高机密原文，或粘贴带有“罗曰：”的加密指令..."></textarea>
+        <!-- 磁力链接自动净化与极速加解密配置栏 -->
+        <div class="magnet-toolbar">
+            <div class="magnet-switches">
+                <label class="magnet-switch-label" title="检测到 magnet:? 磁力链接时，自动剔除 & 及其后面的文件名(dn)和追踪器(tr)等无用信息">
+                    <input type="checkbox" id="chkCleanMagnet" checked>
+                    <span>🧲 自动精简磁力 (&amp;及后缀剔除)</span>
+                </label>
+                <label class="magnet-switch-label" title="粘贴原文/磁力时自动加密，粘贴“罗曰：”密文时自动解密还原">
+                    <input type="checkbox" id="chkAutoEncryptPaste" checked>
+                    <span>⚡ 粘贴自动加密/解密</span>
+                </label>
+                <label class="magnet-switch-label" title="自动加密或解密完成后，顺便把结果直接复制进剪贴板，免去手动点复制">
+                    <input type="checkbox" id="chkAutoCopyResult" checked>
+                    <span>📋 结果自动复制</span>
+                </label>
+            </div>
+            <div id="magnetCleanBadge" class="magnet-status-badge">
+                <span>✨ 已剔除冗余后缀</span>
+            </div>
+        </div>
+
+        <textarea id="inputText" class="main-textarea" placeholder=">_ 直接粘贴磁力链接将自动剔除 & 后缀并加密；直接粘贴“罗曰：”开头的密文将自动解密还原..."></textarea>
 
         <div class="buttons">
             <button class="main-btn btn-encode" onclick="encodeText()">加密混淆 (生成罗曰)</button>
@@ -601,7 +737,16 @@
 
         <textarea id="outputText" class="main-textarea" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
 
-        <!-- ==================== 新增：董事会群友随机冒出趣味互动台 ==================== -->
+        <!-- 解密出磁力链接时的快捷操作栏（已新增唤醒夸克浏览器，并移除转藏头诗按钮） -->
+        <div id="decodedMagnetBar" class="decoded-magnet-bar">
+            <span>🧲 检测到磁力链接，可一键唤醒下载软件或夸克浏览器：</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a id="btnLaunchMagnet" href="#" class="btn-open-magnet">🚀 唤醒软件打开磁力</a>
+                <button type="button" class="btn-open-quark" onclick="launchQuarkWithMagnet()">⚡ 唤醒夸克浏览器</button>
+            </div>
+        </div>
+
+        <!-- ==================== 董事会群友随机冒出趣味互动台 ==================== -->
         <div class="fun-console">
             <div class="fun-console-header">
                 <div class="fun-console-title">
@@ -653,7 +798,7 @@
         </div>
     </div>
 
-    <!-- ==================== 子网页视图：字符藏头诗生成与解密 ==================== -->
+    <!-- ==================== 子网页视图：字符藏头诗生成与解密（仅在点击入口时开启） ==================== -->
     <div id="poemView" class="view-section">
         <div class="poem-header-bar">
             <button type="button" class="btn-back-main" onclick="backToMainTool()">← 返回“罗曰”主操作台</button>
@@ -753,7 +898,7 @@
         if (toastTimer) clearTimeout(toastTimer);
         toastTimer = setTimeout(() => {
             toast.classList.remove('show');
-        }, 2400);
+        }, 2800);
     }
 
     // ==================== 页面视图切换逻辑 ====================
@@ -775,6 +920,46 @@
         document.getElementById('mainView').classList.add('active');
     }
 
+    // ==================== 磁力链接自动精简（剔除 & 及后缀）核心函数 ====================
+    function cleanMagnetText(rawText) {
+        if (!rawText) return { text: rawText, wasCleaned: false, removedChars: 0 };
+
+        let wasCleaned = false;
+        let removedChars = 0;
+
+        // 按行处理，支持单条或多行批量磁力链接同时精简
+        const lines = rawText.split(/\r?\n/);
+        const cleanedLines = lines.map(line => {
+            const magnetPos = line.toLowerCase().indexOf('magnet:?');
+            if (magnetPos !== -1) {
+                const ampPos = line.indexOf('&', magnetPos);
+                if (ampPos !== -1) {
+                    wasCleaned = true;
+                    removedChars += (line.length - ampPos);
+                    return line.substring(0, ampPos).trim();
+                }
+            }
+            return line;
+        });
+
+        return {
+            text: cleanedLines.join('\n'),
+            wasCleaned: wasCleaned,
+            removedChars: removedChars
+        };
+    }
+
+    function updateMagnetBadge(wasCleaned, removedChars) {
+        const badge = document.getElementById('magnetCleanBadge');
+        if (!badge) return;
+        if (wasCleaned && removedChars > 0) {
+            badge.innerHTML = `✨ 已自动精简 &amp; 后缀（剔除 ${removedChars} 字符）`;
+            badge.classList.add('show');
+        } else {
+            badge.classList.remove('show');
+        }
+    }
+
     // ==================== 第一个网页：“罗曰”加密/解密核心逻辑 ====================
     // 1. 标准 Base64 字符表
     const b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -785,13 +970,28 @@
     const PREFIX = "罗曰：";
 
     // 加密功能
-    function encodeText() {
+    function encodeText(options = {}) {
         recordActionClick();
-        const input = document.getElementById('inputText').value;
-        if (!input) {
+        const inputEl = document.getElementById('inputText');
+        let input = inputEl.value;
+        if (!input || !input.trim()) {
             showMessage('系统警告：请输入需要加密的内容！', '#e67e22');
             return;
         }
+
+        // 检查是否开启“自动精简磁力 (&及后缀剔除)”
+        const chkClean = document.getElementById('chkCleanMagnet');
+        let cleanInfo = { wasCleaned: false, removedChars: 0 };
+        if (chkClean && chkClean.checked) {
+            cleanInfo = cleanMagnetText(input);
+            if (cleanInfo.wasCleaned) {
+                input = cleanInfo.text;
+                inputEl.value = input;
+            }
+        }
+        updateMagnetBadge(cleanInfo.wasCleaned, cleanInfo.removedChars);
+        document.getElementById('decodedMagnetBar').classList.remove('show');
+
         try {
             let b64 = btoa(unescape(encodeURIComponent(input)));
             let result = PREFIX;
@@ -802,25 +1002,104 @@
                 }
             }
             document.getElementById('outputText').value = result;
-            showMessage('加密完成：已生成“罗曰”密文！', '#27ae60');
+
+            // 判断是否需要自动复制生成的密文
+            const chkAutoCopy = document.getElementById('chkAutoCopyResult');
+            if (options.fromPaste && chkAutoCopy && chkAutoCopy.checked) {
+                copyOutputSilently(result);
+                if (cleanInfo.wasCleaned) {
+                    showMessage(`⚡ 磁力已精简(-${cleanInfo.removedChars}字)并加密复制到剪贴板！`, '#27ae60');
+                } else {
+                    showMessage('⚡ 已自动生成“罗曰”密文并复制到剪贴板！', '#27ae60');
+                }
+            } else {
+                if (cleanInfo.wasCleaned) {
+                    showMessage(`✨ 已自动剔除 & 后缀(-${cleanInfo.removedChars}字)并生成“罗曰”密文！`, '#27ae60');
+                } else {
+                    showMessage('加密完成：已生成“罗曰”密文！', '#27ae60');
+                }
+            }
         } catch (e) {
             showMessage("加密异常：包含无法处理的特殊指令符号。", '#c0392b');
         }
     }
 
+    // 静默复制辅助函数
+    function copyOutputSilently(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).catch(() => {
+                fallbackCopyRaw(text);
+            });
+        } else {
+            fallbackCopyRaw(text);
+        }
+    }
+
+    function fallbackCopyRaw(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-999999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (err) {}
+        document.body.removeChild(ta);
+    }
+
+    // 监听主输入框粘贴事件：自动区分“罗曰密文（自动解密）”与“磁力/普通文本（自动精简并加密）”
+    document.getElementById('inputText').addEventListener('paste', function() {
+        setTimeout(() => {
+            const rawVal = this.value;
+            const val = rawVal.trim();
+            if (!val) return;
+
+            const chkAuto = document.getElementById('chkAutoEncryptPaste');
+            const autoEnabled = !chkAuto || chkAuto.checked;
+
+            // 1. 智能检测粘贴的内容是否包含“罗曰：”密文（即便前面不小心带了群友昵称或空格也能自动提取并解密）
+            const prefixIdx = val.indexOf(PREFIX);
+            if (prefixIdx !== -1) {
+                if (prefixIdx > 0) {
+                    this.value = val.substring(prefixIdx).trim();
+                }
+                if (autoEnabled) {
+                    decodeText({ fromPaste: true });
+                }
+                return;
+            }
+
+            // 2. 如果粘贴的是磁力或普通明文：先检查是否需要精简磁力 & 后缀
+            const chkClean = document.getElementById('chkCleanMagnet');
+            if (chkClean && chkClean.checked && /magnet:\?/i.test(val)) {
+                const res = cleanMagnetText(this.value);
+                if (res.wasCleaned) {
+                    this.value = res.text;
+                    updateMagnetBadge(true, res.removedChars);
+                }
+            }
+
+            // 3. 如果开启了“粘贴自动加密/解密”，立即自动执行加密
+            if (autoEnabled) {
+                encodeText({ fromPaste: true });
+            }
+        }, 20);
+    });
+
     // 解密功能
-    function decodeText() {
+    function decodeText(options = {}) {
         recordActionClick();
-        let input = document.getElementById('inputText').value.trim();
+        const inputEl = document.getElementById('inputText');
+        let input = inputEl.value.trim();
         if (!input) {
             showMessage('系统警告：请输入需要解密的密文！', '#e67e22');
             return;
         }
         try {
-            if (input.startsWith(PREFIX)) {
-                input = input.substring(PREFIX.length);
+            const prefixIdx = input.indexOf(PREFIX);
+            if (prefixIdx !== -1) {
+                input = input.substring(prefixIdx + PREFIX.length);
             } else {
-                showMessage("权限拒绝：密文协议头不匹配，必须以“" + PREFIX + "”开头！", '#c0392b');
+                showMessage("权限拒绝：密文协议头不匹配，必须包含“" + PREFIX + "”！", '#c0392b');
                 return;
             }
             let b64 = "";
@@ -836,9 +1115,68 @@
             }
             let str = decodeURIComponent(escape(atob(b64)));
             document.getElementById('outputText').value = str;
-            showMessage('解密成功：已还原最高机密明文！', '#27ae60');
+            updateMagnetBadge(false, 0);
+
+            // 如果解密出来的是 magnet:? 磁力链接，展示快捷操作条（唤醒软件 + 唤醒夸克浏览器）
+            const magnetBar = document.getElementById('decodedMagnetBar');
+            const launchBtn = document.getElementById('btnLaunchMagnet');
+            if (/magnet:\?/i.test(str.trim())) {
+                const firstMagnet = str.trim().split(/\r?\n/).find(l => /magnet:\?/i.test(l)) || str.trim();
+                launchBtn.href = firstMagnet.trim();
+                magnetBar.classList.add('show');
+            } else {
+                magnetBar.classList.remove('show');
+            }
+
+            const chkAutoCopy = document.getElementById('chkAutoCopyResult');
+            if (chkAutoCopy && chkAutoCopy.checked) {
+                copyOutputSilently(str);
+                if (options.fromPaste) {
+                    showMessage('🔓 粘贴密文已自动解密还原，并已复制到剪贴板！', '#27ae60');
+                } else {
+                    showMessage('🔓 解密成功：已还原明文并自动复制到剪贴板！', '#27ae60');
+                }
+            } else {
+                showMessage('解密成功：已还原最高机密明文！', '#27ae60');
+            }
         } catch (e) {
             showMessage("解密失败：密文数据已损坏或遭到未授权篡改。", '#c0392b');
+        }
+    }
+
+    // ==================== 新增：一键唤醒夸克浏览器打开磁力 ====================
+    function launchQuarkWithMagnet() {
+        recordActionClick();
+        const out = document.getElementById('outputText').value.trim();
+        const firstMagnet = out.split(/\r?\n/).find(l => /magnet:\?/i.test(l)) || out;
+
+        if (!firstMagnet || !/magnet:\?/i.test(firstMagnet)) {
+            showMessage('未检测到有效的磁力链接！', '#e67e22');
+            return;
+        }
+
+        const cleanMagnet = firstMagnet.trim();
+        // 1. 先自动把磁力链接写入剪贴板（夸克 App / 夸克浏览器启动后会自动读取剪贴板弹出磁力云收藏/离线下载窗口）
+        copyOutputSilently(cleanMagnet);
+
+        const ua = navigator.userAgent || '';
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+
+        if (isMobile) {
+            showMessage('⚡ 已复制磁力并正在唤醒夸克 App（进入夸克后将自动识别磁力）...', '#2563eb');
+            // 优先通过夸克 URL Scheme 唤醒手机端夸克浏览器
+            window.location.href = 'quark://';
+        } else {
+            showMessage('⚡ 已复制磁力并尝试唤醒夸克（电脑端也可在打开的夸克网盘中直接 Ctrl+V 离线下载）', '#2563eb');
+            // 桌面端尝试触发 quark:// 协议，并同时打开夸克网盘网页版方便直接粘贴离线下载
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'quark://';
+            document.body.appendChild(iframe);
+            setTimeout(() => {
+                if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 1500);
+            window.open('https://pan.quark.cn/', '_blank');
         }
     }
 
@@ -860,11 +1198,12 @@
         recordActionClick();
         document.getElementById('inputText').value = "";
         document.getElementById('outputText').value = "";
+        updateMagnetBadge(false, 0);
+        document.getElementById('decodedMagnetBar').classList.remove('show');
         showMessage("操作台已清空。", '#7f8c8d');
     }
 
     // ==================== 第二个网页：字符藏头诗生成与解密核心逻辑 ====================
-    // 扩充版词库：每个数字与字母均配备 6 句不同七言诗，且全库 216 句首字完全互斥，确保逆向解密 100% 准确
     var charDictionary = {
         '0': [
             { text: '零露沾衣秋夜凉', tip: '0(零)' },
@@ -1330,7 +1669,7 @@
     document.getElementById('decodeInput').addEventListener('input', doDecode);
     document.getElementById('btnCopy').onclick = copyPoem;
 
-    // ==================== 新增：董事会 48 位群友名字随机冒出与趣味点名系统 ====================
+    // ==================== 董事会 48 位群友名字随机冒出与趣味点名系统 ====================
     const BOARD_MEMBERS = [
         "邓座", "邓哥", "邓局", "源", "邓思源", "锐", "李子渊", "地瓜",
         "李梓豪", "李梦昭", "李森林", "森林哥", "冯海裕", "佛山仔", "叶泰环", "液态环",
@@ -1427,21 +1766,17 @@
             x = options.x;
             y = options.y;
         } else {
-            // 优先在屏幕左右两侧或上下边缘冒出，减少对中间阅读区的干扰，同时也有一定概率全屏随机
             const vw = window.innerWidth;
             const vh = window.innerHeight;
             const side = Math.random();
             if (side < 0.38 && vw > 960) {
-                // 左侧区域
                 x = 70 + Math.random() * ((vw - 800) / 2 - 40);
                 y = 60 + Math.random() * (vh - 120);
             } else if (side < 0.76 && vw > 960) {
-                // 右侧区域
                 const rightStart = (vw + 800) / 2 + 20;
                 x = rightStart + Math.random() * Math.max(60, vw - rightStart - 80);
                 y = 60 + Math.random() * (vh - 120);
             } else {
-                // 全屏随机位置
                 x = Math.max(80, Math.min(vw - 80, 60 + Math.random() * (vw - 120)));
                 y = Math.max(50, Math.min(vh - 50, 50 + Math.random() * (vh - 100)));
             }
@@ -1486,7 +1821,7 @@
     function scheduleNextAutoSpawn() {
         if (autoSpawnTimer) clearTimeout(autoSpawnTimer);
         if (!autoSpawnEnabled) return;
-        const delay = 900 + Math.random() * 850; // 每 0.9 ~ 1.75 秒随机冒出一个
+        const delay = 900 + Math.random() * 850;
         autoSpawnTimer = setTimeout(() => {
             if (autoSpawnEnabled && !document.hidden) {
                 spawnMemberBubble();
@@ -1531,7 +1866,6 @@
     // 🎆 满屏狂暴召唤群友
     function summonMemberStorm() {
         recordActionClick();
-        // 打乱数组顺序，让 30 位不同群友依次在满屏炸出
         const shuffled = [...BOARD_MEMBERS].sort(() => Math.random() - 0.5);
         const count = 28;
         for (let i = 0; i < count; i++) {
@@ -1577,7 +1911,6 @@
                 lastRolledText = `【三星董事会最高决议】经系统随机抽签，董事「${finalName}」${finalTitle}！`;
                 isRolling = false;
 
-                // 在卡片正上方炸出一个庆祝气泡
                 const rect = nameEl.getBoundingClientRect();
                 spawnMemberBubble({
                     name: finalName,
@@ -1604,7 +1937,10 @@
             tag === 'button' ||
             tag === 'textarea' ||
             tag === 'input' ||
+            tag === 'label' ||
+            tag === 'a' ||
             e.target.closest('button') ||
+            e.target.closest('label') ||
             e.target.closest('.poem-line')
         ) {
             return;
