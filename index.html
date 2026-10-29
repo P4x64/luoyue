@@ -1,71 +1,340 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>“罗曰”三星⭐⭐⭐全球董事会交流群专用工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // 在首屏渲染前立即读取本地主题设置与系统偏好，避免闪烁 (FOUC)
+        (function() {
+            const THEME_STORAGE_KEY = 'luoyue_board_theme_mode_v1';
+            const savedMode = localStorage.getItem(THEME_STORAGE_KEY) || 'auto';
+            const sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const resolvedTheme = savedMode === 'auto' ? (sysDark ? 'dark' : 'light') : savedMode;
+            document.documentElement.setAttribute('data-theme', resolvedTheme);
+            document.documentElement.setAttribute('data-theme-mode', savedMode);
+        })();
+    </script>
     <style>
-        /* 完全还原第一版的清爽亮色背景 */
+        /* ==================== 亮色 / 暗色主题 CSS 变量定义 ==================== */
+        :root,
+        html[data-theme="light"] {
+            --bg-body: #f4f5f7;
+            --text-main: #333333;
+            --bg-card: #ffffff;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            --card-border: transparent;
+            --title-color: #2c3e50;
+            --subtitle-color: #7f8c8d;
+
+            /* 输入框与文本域 */
+            --textarea-bg: #fafafa;
+            --textarea-focus-bg: #ffffff;
+            --textarea-border: #e0e0e0;
+            --textarea-focus-border: #3498db;
+            --textarea-focus-shadow: rgba(52, 152, 219, 0.2);
+            --textarea-text: #333333;
+            --textarea-placeholder: #999999;
+
+            /* 磁力工具栏 */
+            --toolbar-bg: #f8fafc;
+            --toolbar-border: #e2e8f0;
+            --toolbar-text: #475569;
+            --switch-label-text: #334155;
+            --badge-bg: #fff7ed;
+            --badge-text: #c2410c;
+            --badge-border: #ffedd5;
+
+            /* 磁力解密快捷栏 */
+            --decoded-bar-bg: #f0fdf4;
+            --decoded-bar-border: #bbf7d0;
+            --decoded-bar-text: #166534;
+
+            /* 趣味互动控制台 */
+            --console-bg: linear-gradient(135deg, #fcfaf5 0%, #f5f7fa 100%);
+            --console-border: #e2e8f0;
+            --console-title: #2c3e50;
+            --console-hint: #7f8c8d;
+            --toggle-btn-bg: #ffffff;
+            --toggle-btn-text: #475569;
+            --toggle-btn-border: #cbd5e1;
+            --toggle-btn-hover-bg: #f1f5f9;
+            --toggle-btn-hover-text: #1e293b;
+            --toggle-btn-active-bg: #ebf8ff;
+            --toggle-btn-active-text: #2b6cb0;
+            --toggle-btn-active-border: #90cdf4;
+
+            /* 抽签结果展示框 */
+            --roll-card-bg: #ffffff;
+            --roll-card-border: #cbd5e1;
+            --roll-label-text: #718096;
+            --roll-name-bg: #fff5eb;
+            --roll-name-text: #d35400;
+            --roll-name-border: #fad7a0;
+            --roll-title-text: #2c3e50;
+            --fill-btn-bg: #edf2f7;
+            --fill-btn-text: #2d3748;
+            --fill-btn-border: #cbd5e0;
+            --fill-btn-hover-bg: #e2e8f0;
+
+            /* 页脚与统计栏 */
+            --footer-text: #bdc3c7;
+            --stats-border: #ecf0f1;
+            --stats-text: #95a5a6;
+            --stats-item-bg: #f8f9fa;
+            --stats-item-border: #eeeeee;
+            --stats-num-color: #e67e22;
+
+            /* 藏头诗子页面 */
+            --back-btn-bg: #f1f5f9;
+            --back-btn-text: #475569;
+            --back-btn-border: #cbd5e1;
+            --back-btn-hover-bg: #e2e8f0;
+            --back-btn-hover-text: #1e293b;
+            --poem-title-color: #2d3748;
+            --tabs-border: #edf2f7;
+            --tab-text: #718096;
+            --tab-active-text: #3182ce;
+            --tab-active-bg: #ebf8ff;
+            --input-box-bg: #ffffff;
+            --input-box-border: #cbd5e0;
+            --input-box-text: #333333;
+            --result-box-bg: #fdfbf7;
+            --result-box-border: #e2e8f0;
+            --result-box-left: #b7791f;
+            --poem-line-bg: #fff9f0;
+            --poem-line-border: #f1e4c3;
+            --poem-body-text: #2d3748;
+            --head-char-color: #c53030;
+            --punct-color: #718096;
+            --meta-tag-color: #a0aec0;
+            --placeholder-color: #a0aec0;
+            --decode-out-bg: #f7fafc;
+            --decode-out-border: #cbd5e0;
+            --decode-out-text: #2b6cb0;
+            --explain-text: #718096;
+
+            /* 主题切换器外观 */
+            --theme-pill-bg: #f1f5f9;
+            --theme-pill-border: #e2e8f0;
+            --theme-btn-text: #64748b;
+            --theme-btn-active-bg: #ffffff;
+            --theme-btn-active-text: #0f172a;
+            --theme-btn-active-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        html[data-theme="dark"] {
+            --bg-body: #0b1120;
+            --text-main: #e2e8f0;
+            --bg-card: #151f32;
+            --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+            --card-border: #263552;
+            --title-color: #f8fafc;
+            --subtitle-color: #94a3b8;
+
+            /* 输入框与文本域 */
+            --textarea-bg: #0f172a;
+            --textarea-focus-bg: #0f172a;
+            --textarea-border: #2d3f5e;
+            --textarea-focus-border: #38bdf8;
+            --textarea-focus-shadow: rgba(56, 189, 248, 0.22);
+            --textarea-text: #f1f5f9;
+            --textarea-placeholder: #64748b;
+
+            /* 磁力工具栏 */
+            --toolbar-bg: #1b2840;
+            --toolbar-border: #2c3e5e;
+            --toolbar-text: #cbd5e1;
+            --switch-label-text: #e2e8f0;
+            --badge-bg: rgba(234, 88, 12, 0.18);
+            --badge-text: #fdba74;
+            --badge-border: rgba(251, 146, 60, 0.35);
+
+            /* 磁力解密快捷栏 */
+            --decoded-bar-bg: rgba(22, 163, 74, 0.14);
+            --decoded-bar-border: rgba(34, 197, 94, 0.35);
+            --decoded-bar-text: #86efac;
+
+            /* 趣味互动控制台 */
+            --console-bg: linear-gradient(135deg, #19243a 0%, #131c2e 100%);
+            --console-border: #2a3b5c;
+            --console-title: #f1f5f9;
+            --console-hint: #94a3b8;
+            --toggle-btn-bg: #1e293b;
+            --toggle-btn-text: #cbd5e1;
+            --toggle-btn-border: #334155;
+            --toggle-btn-hover-bg: #283548;
+            --toggle-btn-hover-text: #ffffff;
+            --toggle-btn-active-bg: rgba(56, 189, 248, 0.16);
+            --toggle-btn-active-text: #7dd3fc;
+            --toggle-btn-active-border: rgba(56, 189, 248, 0.45);
+
+            /* 抽签结果展示框 */
+            --roll-card-bg: #0f172a;
+            --roll-card-border: #334155;
+            --roll-label-text: #94a3b8;
+            --roll-name-bg: rgba(230, 126, 34, 0.16);
+            --roll-name-text: #fbbf24;
+            --roll-name-border: rgba(245, 158, 11, 0.4);
+            --roll-title-text: #e2e8f0;
+            --fill-btn-bg: #1e293b;
+            --fill-btn-text: #e2e8f0;
+            --fill-btn-border: #334155;
+            --fill-btn-hover-bg: #334155;
+
+            /* 页脚与统计栏 */
+            --footer-text: #64748b;
+            --stats-border: #263552;
+            --stats-text: #94a3b8;
+            --stats-item-bg: #1b273d;
+            --stats-item-border: #2a3b5c;
+            --stats-num-color: #fb923c;
+
+            /* 藏头诗子页面 */
+            --back-btn-bg: #1e293b;
+            --back-btn-text: #cbd5e1;
+            --back-btn-border: #334155;
+            --back-btn-hover-bg: #334155;
+            --back-btn-hover-text: #f8fafc;
+            --poem-title-color: #f8fafc;
+            --tabs-border: #263552;
+            --tab-text: #94a3b8;
+            --tab-active-text: #60a5fa;
+            --tab-active-bg: rgba(59, 130, 246, 0.16);
+            --input-box-bg: #0f172a;
+            --input-box-border: #2d3f5e;
+            --input-box-text: #f1f5f9;
+            --result-box-bg: #111a2c;
+            --result-box-border: #263552;
+            --result-box-left: #f59e0b;
+            --poem-line-bg: #1b2842;
+            --poem-line-border: #2e436e;
+            --poem-body-text: #e2e8f0;
+            --head-char-color: #f87171;
+            --punct-color: #94a3b8;
+            --meta-tag-color: #64748b;
+            --placeholder-color: #64748b;
+            --decode-out-bg: #0f172a;
+            --decode-out-border: #334155;
+            --decode-out-text: #60a5fa;
+            --explain-text: #94a3b8;
+
+            /* 主题切换器外观 */
+            --theme-pill-bg: #0f172a;
+            --theme-pill-border: #283754;
+            --theme-btn-text: #94a3b8;
+            --theme-btn-active-bg: #243452;
+            --theme-btn-active-text: #f8fafc;
+            --theme-btn-active-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ==================== 基础与容器样式 ==================== */
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f5f7; 
+            background-color: var(--bg-body); 
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #333;
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        /* 纯白卡片容器与柔和阴影 */
+        /* 卡片容器与柔和阴影 */
         .container-card {
-            background-color: #fff;
+            background-color: var(--bg-card);
             max-width: 800px;
             width: 100%;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-            padding: 40px 30px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            padding: 36px 30px 40px 30px;
             box-sizing: border-box;
             position: relative;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
+
+        /* ==================== 顶部主题模式切换栏 ==================== */
+        .theme-topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .theme-switcher-pill {
+            display: inline-flex;
+            align-items: center;
+            background: var(--theme-pill-bg);
+            border: 1px solid var(--theme-pill-border);
+            padding: 3px;
+            border-radius: 999px;
+            gap: 2px;
+            transition: all 0.25s ease;
+        }
+        .theme-mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--theme-btn-text);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .theme-mode-btn:hover {
+            color: var(--theme-btn-active-text);
+        }
+        .theme-mode-btn.active {
+            background: var(--theme-btn-active-bg);
+            color: var(--theme-btn-active-text);
+            box-shadow: var(--theme-btn-active-shadow);
+        }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--title-color);
             font-size: 24px;
             font-weight: bold;
             margin-top: 0;
             margin-bottom: 10px;
+            transition: color 0.3s ease;
         }
         .subtitle {
             text-align: center;
-            color: #7f8c8d;
+            color: var(--subtitle-color);
             font-size: 14px;
             margin-bottom: 24px;
+            transition: color 0.3s ease;
         }
-        /* 主页面输入/输出框样式还原 */
+        /* 主页面输入/输出框样式 */
         textarea.main-textarea {
             width: 100%;
             height: 120px;
             padding: 15px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--textarea-border);
             border-radius: 8px;
             resize: vertical;
             font-size: 15px;
             box-sizing: border-box;
             outline: none;
-            transition: all 0.3s;
-            background-color: #fafafa;
-            color: #333;
+            transition: background-color 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s;
+            background-color: var(--textarea-bg);
+            color: var(--textarea-text);
         }
         textarea.main-textarea:focus {
-            border-color: #3498db;
-            background-color: #fff;
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+            border-color: var(--textarea-focus-border);
+            background-color: var(--textarea-focus-bg);
+            box-shadow: 0 0 8px var(--textarea-focus-shadow);
         }
         textarea.main-textarea::placeholder {
-            color: #999;
+            color: var(--textarea-placeholder);
         }
 
         /* 磁力智能净化与自动化工具条 */
@@ -75,13 +344,14 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: var(--toolbar-bg);
+            border: 1px solid var(--toolbar-border);
             border-radius: 8px;
             padding: 8px 14px;
             margin-bottom: 10px;
             font-size: 13px;
-            color: #475569;
+            color: var(--toolbar-text);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         .magnet-switches {
             display: flex;
@@ -96,7 +366,8 @@
             cursor: pointer;
             user-select: none;
             font-weight: 600;
-            color: #334155;
+            color: var(--switch-label-text);
+            transition: color 0.3s ease;
         }
         .magnet-switch-label input[type="checkbox"] {
             accent-color: #e67e22;
@@ -108,9 +379,9 @@
             font-size: 12px;
             padding: 3px 10px;
             border-radius: 999px;
-            background: #fff7ed;
-            color: #c2410c;
-            border: 1px solid #ffedd5;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border: 1px solid var(--badge-border);
             font-weight: 600;
             display: none;
         }
@@ -157,34 +428,37 @@
         .footer {
             margin-top: 30px;
             font-size: 12px;
-            color: #bdc3c7;
+            color: var(--footer-text);
             text-align: center;
             line-height: 1.6;
+            transition: color 0.3s ease;
         }
         /* 底部访问与点击量统计栏 */
         .stats-bar {
             margin-top: 14px;
             padding-top: 12px;
-            border-top: 1px dashed #ecf0f1;
+            border-top: 1px dashed var(--stats-border);
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 18px;
             flex-wrap: wrap;
             font-size: 12px;
-            color: #95a5a6;
+            color: var(--stats-text);
+            transition: border-color 0.3s ease, color 0.3s ease;
         }
         .stats-item {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background: #f8f9fa;
+            background: var(--stats-item-bg);
             padding: 4px 10px;
             border-radius: 20px;
-            border: 1px solid #eee;
+            border: 1px solid var(--stats-item-border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .stats-num {
-            color: #e67e22;
+            color: var(--stats-num-color);
             font-weight: bold;
             font-family: monospace;
             font-size: 13px;
@@ -291,11 +565,12 @@
         /* 卡片内趣味互动控制台 */
         .fun-console {
             margin-top: 22px;
-            background: linear-gradient(135deg, #fcfaf5 0%, #f5f7fa 100%);
-            border: 1px solid #e2e8f0;
+            background: var(--console-bg);
+            border: 1px solid var(--console-border);
             border-radius: 10px;
             padding: 14px 16px;
             box-sizing: border-box;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
         .fun-console-header {
             display: flex;
@@ -308,10 +583,16 @@
         .fun-console-title {
             font-size: 13px;
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--console-title);
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: color 0.3s ease;
+        }
+        .fun-console-hint {
+            font-size: 11.5px;
+            color: var(--console-hint);
+            transition: color 0.3s ease;
         }
         .online-dot {
             width: 8px;
@@ -367,25 +648,25 @@
         }
         .fun-btn-party:hover { opacity: 0.92; }
         .fun-btn-toggle {
-            background: #fff;
-            color: #475569;
-            border: 1px solid #cbd5e1;
+            background: var(--toggle-btn-bg);
+            color: var(--toggle-btn-text);
+            border: 1px solid var(--toggle-btn-border);
         }
         .fun-btn-toggle:hover {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: var(--toggle-btn-hover-bg);
+            color: var(--toggle-btn-hover-text);
         }
         .fun-btn-toggle.active-state {
-            background: #ebf8ff;
-            color: #2b6cb0;
-            border-color: #90cdf4;
+            background: var(--toggle-btn-active-bg);
+            color: var(--toggle-btn-active-text);
+            border-color: var(--toggle-btn-active-border);
         }
 
         /* 抽签点名结果展示框 */
         .roll-result-card {
             margin-top: 10px;
-            background: #fff;
-            border: 1px dashed #cbd5e1;
+            background: var(--roll-card-bg);
+            border: 1px dashed var(--roll-card-border);
             border-radius: 8px;
             padding: 10px 14px;
             display: none;
@@ -394,28 +675,33 @@
             flex-wrap: wrap;
             gap: 10px;
             animation: fadeIn 0.2s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .roll-result-card.show {
             display: flex;
         }
+        .roll-label {
+            font-size: 13px;
+            color: var(--roll-label-text);
+        }
         .roll-name-highlight {
             font-size: 16px;
             font-weight: 800;
-            color: #d35400;
+            color: var(--roll-name-text);
             padding: 2px 8px;
-            background: #fff5eb;
+            background: var(--roll-name-bg);
             border-radius: 6px;
-            border: 1px solid #fad7a0;
+            border: 1px solid var(--roll-name-border);
         }
         .roll-title-tag {
             font-size: 13px;
-            color: #2c3e50;
+            color: var(--roll-title-text);
             font-weight: 600;
         }
         .btn-fill-roll {
-            background: #edf2f7;
-            color: #2d3748;
-            border: 1px solid #cbd5e0;
+            background: var(--fill-btn-bg);
+            color: var(--fill-btn-text);
+            border: 1px solid var(--fill-btn-border);
             padding: 4px 10px;
             border-radius: 5px;
             font-size: 12px;
@@ -424,14 +710,14 @@
             transition: all 0.2s;
         }
         .btn-fill-roll:hover {
-            background: #e2e8f0;
+            background: var(--fill-btn-hover-bg);
         }
 
         /* 解密后磁力快捷操作栏 */
         .decoded-magnet-bar {
             margin-top: 10px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            background: var(--decoded-bar-bg);
+            border: 1px solid var(--decoded-bar-border);
             border-radius: 8px;
             padding: 10px 14px;
             display: none;
@@ -440,7 +726,8 @@
             flex-wrap: wrap;
             gap: 10px;
             font-size: 13px;
-            color: #166534;
+            color: var(--decoded-bar-text);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         .decoded-magnet-bar.show {
             display: flex;
@@ -525,7 +812,7 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ================= 第二个网页（字符藏头诗）专属样式还原 ================= */
+        /* ================= 第二个网页（字符藏头诗）专属样式 ================= */
         .poem-header-bar {
             display: flex;
             justify-content: space-between;
@@ -535,9 +822,9 @@
             gap: 10px;
         }
         .btn-back-main {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #cbd5e1;
+            background: var(--back-btn-bg);
+            color: var(--back-btn-text);
+            border: 1px solid var(--back-btn-border);
             padding: 7px 14px;
             border-radius: 6px;
             font-size: 13px;
@@ -546,37 +833,39 @@
             transition: all 0.2s;
         }
         .btn-back-main:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background: var(--back-btn-hover-bg);
+            color: var(--back-btn-hover-text);
         }
         .poem-title {
             margin: 0 0 20px 0;
-            color: #2d3748;
+            color: var(--poem-title-color);
             text-align: center;
             font-size: 22px;
             font-weight: bold;
+            transition: color 0.3s ease;
         }
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            border-bottom: 2px solid #edf2f7;
+            border-bottom: 2px solid var(--tabs-border);
             padding-bottom: 8px;
+            transition: border-color 0.3s ease;
         }
         .tab-btn {
             background: none;
             border: none;
             font-size: 15px;
             font-weight: 600;
-            color: #718096;
+            color: var(--tab-text);
             cursor: pointer;
             padding: 6px 14px;
             border-radius: 6px;
             transition: all 0.2s;
         }
         .tab-btn.active {
-            color: #3182ce;
-            background: #ebf8ff;
+            color: var(--tab-active-text);
+            background: var(--tab-active-bg);
         }
         .panel { display: none; }
         .panel.active { display: block; }
@@ -585,15 +874,16 @@
             width: 100%;
             padding: 12px 14px;
             font-size: 15px;
-            border: 1px solid #cbd5e0;
+            border: 1px solid var(--input-box-border);
             border-radius: 8px;
             outline: none;
             box-sizing: border-box;
-            transition: border-color 0.2s;
-            background: #fff;
-            color: #333;
+            transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+            background: var(--input-box-bg);
+            color: var(--input-box-text);
         }
-        .input-box:focus { border-color: #3182ce; }
+        .input-box:focus { border-color: var(--textarea-focus-border); }
+        .input-box::placeholder { color: var(--textarea-placeholder); }
         textarea.input-box {
             height: 90px;
             resize: vertical;
@@ -617,9 +907,9 @@
         .btn-poem-decode:hover { background: #2b6cb0; }
 
         .result-box {
-            background: #fdfbf7;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid #b7791f;
+            background: var(--result-box-bg);
+            border: 1px solid var(--result-box-border);
+            border-left: 4px solid var(--result-box-left);
             border-radius: 6px;
             padding: 14px 18px;
             min-height: 76px;
@@ -630,25 +920,27 @@
             flex-wrap: wrap;
             align-items: center;
             gap: 8px 14px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .poem-line {
             display: inline-flex;
             align-items: baseline;
-            background: #fff9f0;
-            border: 1px solid #f1e4c3;
+            background: var(--poem-line-bg);
+            border: 1px solid var(--poem-line-border);
+            color: var(--poem-body-text);
             border-radius: 6px;
             padding: 3px 10px;
-            transition: transform 0.15s;
+            transition: transform 0.15s, background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         .poem-line:hover {
             transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(183, 121, 31, 0.1);
+            box-shadow: 0 2px 6px rgba(183, 121, 31, 0.15);
         }
-        .head-char { color: #c53030; font-weight: bold; }
-        .punct { color: #718096; }
-        .meta-tag { font-size: 11px; color: #a0aec0; margin-left: 6px; }
+        .head-char { color: var(--head-char-color); font-weight: bold; }
+        .punct { color: var(--punct-color); }
+        .meta-tag { font-size: 11px; color: var(--meta-tag-color); margin-left: 6px; }
         .placeholder-text {
-            color: #a0aec0;
+            color: var(--placeholder-color);
             text-align: center;
             width: 100%;
             padding: 18px 0;
@@ -667,22 +959,24 @@
             display: none;
         }
         .decode-out {
-            background: #f7fafc;
-            border: 1px dashed #cbd5e0;
+            background: var(--decode-out-bg);
+            border: 1px dashed var(--decode-out-border);
             padding: 14px;
             border-radius: 6px;
             margin-top: 16px;
             font-family: monospace;
             font-size: 20px;
             letter-spacing: 2px;
-            color: #2b6cb0;
+            color: var(--decode-out-text);
             word-break: break-all;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
         .explain {
             margin-top: 16px;
             font-size: 13px;
-            color: #718096;
+            color: var(--explain-text);
             line-height: 1.6;
+            transition: color 0.3s ease;
         }
     </style>
 </head>
@@ -695,6 +989,21 @@
 <div id="sysToast" class="sys-toast">系统提示</div>
 
 <div class="container-card">
+
+    <!-- ==================== 顶部自动/手动亮暗色主题切换栏 ==================== -->
+    <div class="theme-topbar">
+        <div class="theme-switcher-pill" role="group" aria-label="主题模式切换">
+            <button type="button" id="themeBtnAuto" class="theme-mode-btn" onclick="setThemeMode('auto')" title="跟随操作系统或浏览器自动切换亮色/暗色模式">
+                <span>🔄 自动</span>
+            </button>
+            <button type="button" id="themeBtnLight" class="theme-mode-btn" onclick="setThemeMode('light')" title="手动锁定为清爽亮色模式">
+                <span>☀️ 亮色</span>
+            </button>
+            <button type="button" id="themeBtnDark" class="theme-mode-btn" onclick="setThemeMode('dark')" title="手动锁定为护眼暗色模式">
+                <span>🌙 暗色</span>
+            </button>
+        </div>
+    </div>
     
     <!-- ==================== 主网页视图：“罗曰”专用工具 ==================== -->
     <div id="mainView" class="view-section active">
@@ -737,7 +1046,7 @@
 
         <textarea id="outputText" class="main-textarea" placeholder=">_ 董事会加密/解密结果将在此处显示..." readonly></textarea>
 
-        <!-- 解密出磁力链接时的快捷操作栏（已新增唤醒夸克浏览器，并移除转藏头诗按钮） -->
+        <!-- 解密出磁力链接时的快捷操作栏（已支持唤醒下载软件与唤醒夸克浏览器） -->
         <div id="decodedMagnetBar" class="decoded-magnet-bar">
             <span>🧲 检测到磁力链接，可一键唤醒下载软件或夸克浏览器：</span>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -753,7 +1062,7 @@
                     <span class="online-dot"></span>
                     <span>三星⭐⭐⭐董事会群友随机出没系统（共 48 位董事潜伏中）</span>
                 </div>
-                <span style="font-size: 11.5px; color: #7f8c8d;">💡 提示：点击网页任意空白处也能炸出群友名字</span>
+                <span class="fun-console-hint">💡 提示：点击网页任意空白处也能炸出群友名字</span>
             </div>
 
             <div class="fun-controls-row">
@@ -770,7 +1079,7 @@
             <!-- 随机抽签点名结果展示栏 -->
             <div id="rollResultCard" class="roll-result-card">
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <span style="font-size: 13px; color: #718096;">🎯 董事会抽签结果：</span>
+                    <span class="roll-label">🎯 董事会抽签结果：</span>
                     <span id="rolledMemberName" class="roll-name-highlight">--</span>
                     <span id="rolledMemberTitle" class="roll-title-tag">--</span>
                 </div>
@@ -851,6 +1160,67 @@
 </div>
 
 <script>
+    // ==================== 自动 / 手动暗色与亮色主题切换系统 ====================
+    const THEME_STORAGE_KEY = 'luoyue_board_theme_mode_v1';
+    const darkMediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    function resolveActualTheme(mode) {
+        if (mode === 'dark' || mode === 'light') {
+            return mode;
+        }
+        return (darkMediaQuery && darkMediaQuery.matches) ? 'dark' : 'light';
+    }
+
+    function applyThemeUI(mode) {
+        const actualTheme = resolveActualTheme(mode);
+        document.documentElement.setAttribute('data-theme', actualTheme);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+
+        const btnAuto = document.getElementById('themeBtnAuto');
+        const btnLight = document.getElementById('themeBtnLight');
+        const btnDark = document.getElementById('themeBtnDark');
+        if (btnAuto && btnLight && btnDark) {
+            btnAuto.classList.toggle('active', mode === 'auto');
+            btnLight.classList.toggle('active', mode === 'light');
+            btnDark.classList.toggle('active', mode === 'dark');
+
+            // 在“自动”按钮上直观展示当前跟随的系统状态
+            const sysLabel = (darkMediaQuery && darkMediaQuery.matches) ? '夜' : '昼';
+            btnAuto.innerHTML = mode === 'auto' ? `<span>🔄 自动(${sysLabel})</span>` : `<span>🔄 自动</span>`;
+        }
+    }
+
+    function setThemeMode(mode) {
+        localStorage.setItem(THEME_STORAGE_KEY, mode);
+        applyThemeUI(mode);
+        const actualTheme = resolveActualTheme(mode);
+        if (mode === 'auto') {
+            showMessage(`🔄 已开启自动模式（当前跟随系统为${actualTheme === 'dark' ? '暗色🌙' : '亮色☀️'}）`, '#2980b9');
+        } else if (mode === 'dark') {
+            showMessage('🌙 已手动切换为：董事会护眼暗色模式', '#34495e');
+        } else {
+            showMessage('☀️ 已手动切换为：经典清爽亮色模式', '#e67e22');
+        }
+    }
+
+    function initThemeSystem() {
+        const savedMode = localStorage.getItem(THEME_STORAGE_KEY) || 'auto';
+        applyThemeUI(savedMode);
+
+        // 实时监听操作系统暗色/亮色变化（当处于“自动”模式时自动无缝切换）
+        if (darkMediaQuery) {
+            const handleSysThemeChange = () => {
+                const currentMode = localStorage.getItem(THEME_STORAGE_KEY) || 'auto';
+                applyThemeUI(currentMode);
+            };
+            if (typeof darkMediaQuery.addEventListener === 'function') {
+                darkMediaQuery.addEventListener('change', handleSysThemeChange);
+            } else if (typeof darkMediaQuery.addListener === 'function') {
+                darkMediaQuery.addListener(handleSysThemeChange);
+            }
+        }
+    }
+
     // ==================== 首页点击量与访问统计逻辑 ====================
     const STORAGE_CLICK_KEY = "luoyue_board_total_clicks_v1";
     let sessionClicks = 0;
@@ -1144,7 +1514,7 @@
         }
     }
 
-    // ==================== 新增：一键唤醒夸克浏览器打开磁力 ====================
+    // ==================== 一键唤醒夸克浏览器打开磁力 ====================
     function launchQuarkWithMagnet() {
         recordActionClick();
         const out = document.getElementById('outputText').value.trim();
@@ -1532,7 +1902,7 @@
         // 如果包含中文，或者输入全为空，直接阻断不生成
         var hasChinese = /[\u4e00-\u9fa5]/.test(raw);
         if (hasChinese) {
-            outputDiv.innerHTML = '<div class="placeholder-text" style="color:#e53e3e;">检测到中文输入，已停止生成（仅支持英文字母与数字）</div>';
+            outputDiv.innerHTML = '<div class="placeholder-text" style="color:#f87171;">检测到中文输入，已停止生成（仅支持英文字母与数字）</div>';
             currentPoemString = "";
             return;
         }
@@ -1941,7 +2311,8 @@
             tag === 'a' ||
             e.target.closest('button') ||
             e.target.closest('label') ||
-            e.target.closest('.poem-line')
+            e.target.closest('.poem-line') ||
+            e.target.closest('.theme-switcher-pill')
         ) {
             return;
         }
@@ -1953,7 +2324,8 @@
         spawnClickParticles(e.clientX, e.clientY);
     });
 
-    // 初始化点击量统计与群友随机冒出系统
+    // 初始化主题系统、点击量统计与群友随机冒出系统
+    initThemeSystem();
     initClickStats();
     scheduleNextAutoSpawn();
 </script>
